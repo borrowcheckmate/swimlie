@@ -1,0 +1,626 @@
+{
+  "sourceLanguage": "en",
+  "strings": {
+    "ANY": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ALG"
+          }
+        }
+      }
+    },
+    "FLY": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "VL"
+          }
+        }
+      }
+    },
+    "KICK": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "KICK"
+          }
+        }
+      }
+    },
+    "  %lld/%lld on goal": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "  %lld/%lld op doel"
+          }
+        }
+      }
+    },
+    "%@ · %lldm pool": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ · %lldm bad"
+          }
+        }
+      }
+    },
+    "%lld %@ · %@ · last %@": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld %@ · %@ · laatste %@"
+          }
+        }
+      }
+    },
+    "%lld laps": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld banen"
+          }
+        }
+      }
+    },
+    "%lld/%lld": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld/%lld"
+          }
+        }
+      }
+    },
+    "%lld/%lld m": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld/%lld m"
+          }
+        }
+      }
+    },
+    "25 m": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "25 m"
+          }
+        }
+      }
+    },
+    "50 m": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "50 m"
+          }
+        }
+      }
+    },
+    "Back": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Terug"
+          }
+        }
+      }
+    },
+    "Crown to save": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kroon draaien om op te slaan"
+          }
+        }
+      }
+    },
+    "Done": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Klaar"
+          }
+        }
+      }
+    },
+    "End": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stop"
+          }
+        }
+      }
+    },
+    "Fins": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vinnen"
+          }
+        }
+      }
+    },
+    "GET READY": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "MAAK JE KLAAR"
+          }
+        }
+      }
+    },
+    "Heart rate zones": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hartslagzones"
+          }
+        }
+      }
+    },
+    "Hold crown to unlock": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Houd kroon vast om te ontgrendelen"
+          }
+        }
+      }
+    },
+    "Kickboard": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kickboard"
+          }
+        }
+      }
+    },
+    "Last %@ · %@": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Laatste %@ · %@"
+          }
+        }
+      }
+    },
+    "Last: %@": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Laatste: %@"
+          }
+        }
+      }
+    },
+    "Locks the touchscreen while swimming. Turn off for testing.": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vergrendelt het scherm tijdens het zwemmen. Zet uit om te testen."
+          }
+        }
+      }
+    },
+    "Next": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Volgende"
+          }
+        }
+      }
+    },
+    "No pauses": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Geen pauzes"
+          }
+        }
+      }
+    },
+    "No zone": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Geen zone"
+          }
+        }
+      }
+    },
+    "One position at the start, to name the pool. Stays on your devices.": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Eén positie bij de start, om het bad te benoemen. Blijft op je apparaten."
+          }
+        }
+      }
+    },
+    "Paddles": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Paddles"
+          }
+        }
+      }
+    },
+    "Pause": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pauze"
+          }
+        }
+      }
+    },
+    "Paused": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gepauzeerd"
+          }
+        }
+      }
+    },
+    "Personal record": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Persoonlijk record"
+          }
+        }
+      }
+    },
+    "Pool": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bad"
+          }
+        }
+      }
+    },
+    "Pull buoy": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pullbuoy"
+          }
+        }
+      }
+    },
+    "Raw pool data for tuning": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ruwe badgegevens voor afstelling"
+          }
+        }
+      }
+    },
+    "Recorder": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Opnemer"
+          }
+        }
+      }
+    },
+    "Resume": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hervat"
+          }
+        }
+      }
+    },
+    "Round %lld/%lld": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ronde %lld/%lld"
+          }
+        }
+      }
+    },
+    "Save swim location": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zwemlocatie opslaan"
+          }
+        }
+      }
+    },
+    "Send a workout from the Swimlie app on your iPhone.": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stuur een training vanuit de Swimlie-app op je iPhone."
+          }
+        }
+      }
+    },
+    "Sensor log": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sensorlog"
+          }
+        }
+      }
+    },
+    "Set": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Serie"
+          }
+        }
+      }
+    },
+    "Set %@": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Serie %@"
+          }
+        }
+      }
+    },
+    "Sets": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Series"
+          }
+        }
+      }
+    },
+    "Snorkel": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Snorkel"
+          }
+        }
+      }
+    },
+    "Start": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Start"
+          }
+        }
+      }
+    },
+    "Start failed: %@": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Starten mislukt: %@"
+          }
+        }
+      }
+    },
+    "Stop": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stop"
+          }
+        }
+      }
+    },
+    "Swim": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zwemmen"
+          }
+        }
+      }
+    },
+    "Swim recovered without its workout: saved to Health only": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zwemmen hersteld zonder training: alleen opgeslagen in Gezondheid"
+          }
+        }
+      }
+    },
+    "Water lock": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Watervergrendeling"
+          }
+        }
+      }
+    },
+    "Workout done": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Training klaar"
+          }
+        }
+      }
+    },
+    "Zone %lld": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zone %lld"
+          }
+        }
+      }
+    },
+    "pause": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "pauze"
+          }
+        }
+      }
+    },
+    "pauses": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "pauzes"
+          }
+        }
+      }
+    },
+    "swim to resume": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "zwem om verder te gaan"
+          }
+        }
+      }
+    },
+    "Avg heart rate": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gem. hartslag"
+          }
+        }
+      }
+    },
+    "Avg pace": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gem. tempo"
+          }
+        }
+      }
+    },
+    "Distance": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Afstand"
+          }
+        }
+      }
+    },
+    "Max heart rate": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Max. hartslag"
+          }
+        }
+      }
+    },
+    "SWOLF": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "SWOLF"
+          }
+        }
+      }
+    },
+    "Swim time": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zwemtijd"
+          }
+        }
+      }
+    },
+    "Total time": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Totale tijd"
+          }
+        }
+      }
+    }
+  },
+  "version": "1.0"
+}

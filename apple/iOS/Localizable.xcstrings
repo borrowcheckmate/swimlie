@@ -1,0 +1,2296 @@
+{
+  "sourceLanguage": "en",
+  "strings": {
+    "Date": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Datum"
+          }
+        }
+      }
+    },
+    "Week": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Week"
+          }
+        }
+      }
+    },
+    "BPM": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "BPM"
+          }
+        }
+      }
+    },
+    "Series": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reeks"
+          }
+        }
+      }
+    },
+    "Bpm": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "BPM"
+          }
+        }
+      }
+    },
+    "Min": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Min"
+          }
+        }
+      }
+    },
+    "Base": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Basis"
+          }
+        }
+      }
+    },
+    "Length": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Baan"
+          }
+        }
+      }
+    },
+    "Stroke": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Slag"
+          }
+        }
+      }
+    },
+    "Start": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Start"
+          }
+        }
+      }
+    },
+    "End": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Einde"
+          }
+        }
+      }
+    },
+    "%@ m/slag": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ m/slag"
+          }
+        }
+      }
+    },
+    "HR %lld/%lld": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "HS %lld/%lld"
+          }
+        }
+      }
+    },
+    "%@%lld bpm rust": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@%lld bpm rust"
+          }
+        }
+      }
+    },
+    "unknown": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "onbekend"
+          }
+        }
+      }
+    },
+    " · round %lld": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": " · ronde %lld"
+          }
+        }
+      }
+    },
+    "#": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "#"
+          }
+        }
+      }
+    },
+    "%@ BPM AVG": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ BPM GEM."
+          }
+        }
+      }
+    },
+    "%@ metres": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ meter"
+          }
+        }
+      }
+    },
+    "%@ metres per stroke": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ meter per slag"
+          }
+        }
+      }
+    },
+    "%@, %@–%@ · %lld m pool": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@, %@–%@ · %lld m bad"
+          }
+        }
+      }
+    },
+    "%lld avg": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld gem."
+          }
+        }
+      }
+    },
+    "%lld lengths": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld banen"
+          }
+        }
+      }
+    },
+    "%lld m per swim": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld m per training"
+          }
+        }
+      }
+    },
+    "%lld min %lld s per 100 metres": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld min %lld s per 100 meter"
+          }
+        }
+      }
+    },
+    "%lld min per swim": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld min per training"
+          }
+        }
+      }
+    },
+    "%lld rounds of %lld m": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld rondes van %lld m"
+          }
+        }
+      }
+    },
+    "%lld s per 100 metres": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld s per 100 meter"
+          }
+        }
+      }
+    },
+    "%lld weeks · %lld/%lld swims": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld weken · %lld/%lld trainingen"
+          }
+        }
+      }
+    },
+    "1 week · %lld/%lld swims": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "1 week · %lld/%lld trainingen"
+          }
+        }
+      }
+    },
+    "25 m": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "25 m"
+          }
+        }
+      }
+    },
+    "50 m": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "50 m"
+          }
+        }
+      }
+    },
+    "AI": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AI"
+          }
+        }
+      }
+    },
+    "AI Review": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AI-review"
+          }
+        }
+      }
+    },
+    "API": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "API"
+          }
+        }
+      }
+    },
+    "API key": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "API-sleutel"
+          }
+        }
+      }
+    },
+    "About": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Over"
+          }
+        }
+      }
+    },
+    "Achievements": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Prestaties"
+          }
+        }
+      }
+    },
+    "Add an endpoint, model and API key in Settings": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Voeg een endpoint, model en API-sleutel toe in Instellingen"
+          }
+        }
+      }
+    },
+    "Any": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Willekeurig"
+          }
+        }
+      }
+    },
+    "Anything else": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nog iets anders"
+          }
+        }
+      }
+    },
+    "Apple Intelligence is off. Turn it on in Settings › Apple Intelligence & Siri": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apple Intelligence staat uit. Zet het aan in Instellingen › Apple Intelligence en Siri"
+          }
+        }
+      }
+    },
+    "Ask AI": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vraag AI"
+          }
+        }
+      }
+    },
+    "Average %lld beats per minute": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gemiddeld %lld slagen per minuut"
+          }
+        }
+      }
+    },
+    "Avg Heart Rate": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gem. hartslag"
+          }
+        }
+      }
+    },
+    "Back": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Terug"
+          }
+        }
+      }
+    },
+    "Backstroke": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rugslag"
+          }
+        }
+      }
+    },
+    "Breaststroke": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Schoolslag"
+          }
+        }
+      }
+    },
+    "Butterfly": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vlinderslag"
+          }
+        }
+      }
+    },
+    "CSS": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "CSS"
+          }
+        }
+      }
+    },
+    "CSS pace": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "CSS-tempo"
+          }
+        }
+      }
+    },
+    "Can swim 200 m non-stop": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kan 200 m non-stop zwemmen"
+          }
+        }
+      }
+    },
+    "Choose file": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bestand kiezen"
+          }
+        }
+      }
+    },
+    "Coach picks the mix": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "De coach kiest de mix"
+          }
+        }
+      }
+    },
+    "Coach's note": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Notitie van de coach"
+          }
+        }
+      }
+    },
+    "Collapse AI Review": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AI-review inklappen"
+          }
+        }
+      }
+    },
+    "Commit": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Commit"
+          }
+        }
+      }
+    },
+    "Copied": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gekopieerd"
+          }
+        }
+      }
+    },
+    "Copy AI prompt": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AI-prompt kopiëren"
+          }
+        }
+      }
+    },
+    "Copy a prompt to a chat app and paste the reply back into Swimlie.": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kopieer een prompt naar een chatapp en plak het antwoord terug in Swimlie."
+          }
+        }
+      }
+    },
+    "Copy prompt": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Prompt kopiëren"
+          }
+        }
+      }
+    },
+    "Copy/paste AI flow": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AI Kopiëren/Plakken"
+          }
+        }
+      }
+    },
+    "Create plan": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Plan maken"
+          }
+        }
+      }
+    },
+    "Create swim": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zwemtraining maken"
+          }
+        }
+      }
+    },
+    "Custom": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aangepast"
+          }
+        }
+      }
+    },
+    "Debug": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Foutopsporing"
+          }
+        }
+      }
+    },
+    "Default": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Standaard"
+          }
+        }
+      }
+    },
+    "Delete": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Verwijderen"
+          }
+        }
+      }
+    },
+    "Distance": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Afstand"
+          }
+        }
+      }
+    },
+    "Distance per stroke": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Afstand per slag"
+          }
+        }
+      }
+    },
+    "Distance per week": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Afstand per week"
+          }
+        }
+      }
+    },
+    "Distance/Stroke": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Afstand/slag"
+          }
+        }
+      }
+    },
+    "Done": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gereed"
+          }
+        }
+      }
+    },
+    "Drill": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Oefening"
+          }
+        }
+      }
+    },
+    "Easy": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rustig"
+          }
+        }
+      }
+    },
+    "Easy Recovery": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rustig herstel"
+          }
+        }
+      }
+    },
+    "Elapsed": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Verstreken"
+          }
+        }
+      }
+    },
+    "Endpoint": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Eindpunt"
+          }
+        }
+      }
+    },
+    "Endurance": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Duurvermogen"
+          }
+        }
+      }
+    },
+    "Engine": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Engine"
+          }
+        }
+      }
+    },
+    "Equipment": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Materiaal"
+          }
+        }
+      }
+    },
+    "Error": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fout"
+          }
+        }
+      }
+    },
+    "Expand AI Review": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AI-review uitklappen"
+          }
+        }
+      }
+    },
+    "Fastest %@ · Slowest %@ · Drift ": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Snelst %@ · Langzaamst %@ · Drift "
+          }
+        }
+      }
+    },
+    "Fins": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vinnen"
+          }
+        }
+      }
+    },
+    "Freestyle": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vrije slag"
+          }
+        }
+      }
+    },
+    "Generate": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Genereren"
+          }
+        }
+      }
+    },
+    "Generate builds one here on the device and shows a preview to save.": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Genereren maakt hier op het toestel een training en toont een voorbeeld om op te slaan."
+          }
+        }
+      }
+    },
+    "Generate builds one here on the device and shows a preview to save. Copy prompt is for an AI app: paste it there, then use Paste in the Library to import the answer.": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Genereren maakt hier op het toestel een training en toont een voorbeeld om op te slaan. Prompt kopiëren is voor een AI-app: plak hem daar en gebruik daarna Plakken in de Bibliotheek om het antwoord te importeren."
+          }
+        }
+      }
+    },
+    "Generate with AI": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Genereren met AI"
+          }
+        }
+      }
+    },
+    "Goal %lld/%lld": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Doel %lld/%lld"
+          }
+        }
+      }
+    },
+    "HR": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "HS"
+          }
+        }
+      }
+    },
+    "Hard": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zwaar"
+          }
+        }
+      }
+    },
+    "Heart Rate": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hartslag"
+          }
+        }
+      }
+    },
+    "Heart rate": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hartslag"
+          }
+        }
+      }
+    },
+    "Heart rate over time": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hartslag na verloop van tijd"
+          }
+        }
+      }
+    },
+    "History": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Geschiedenis"
+          }
+        }
+      }
+    },
+    "Import a workout or plan: paste JSON, open a .json file or share one to Swimlie.": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Importeer een training of plan: plak JSON, open een .json-bestand of deel er een met Swimlie."
+          }
+        }
+      }
+    },
+    "Just learning": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Net begonnen"
+          }
+        }
+      }
+    },
+    "Kickboard": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zwemplank"
+          }
+        }
+      }
+    },
+    "Latest": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Laatste"
+          }
+        }
+      }
+    },
+    "Latest SWOLF": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Laatste SWOLF"
+          }
+        }
+      }
+    },
+    "Latest average": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Laatste gemiddelde"
+          }
+        }
+      }
+    },
+    "Latest pace": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Laatste tempo"
+          }
+        }
+      }
+    },
+    "Latest session": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Laatste training"
+          }
+        }
+      }
+    },
+    "Length %lld": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Baan %lld"
+          }
+        }
+      }
+    },
+    "Lengths": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Banen"
+          }
+        }
+      }
+    },
+    "M": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "M"
+          }
+        }
+      }
+    },
+    "Max %lld beats per minute": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Max %lld slagen per minuut"
+          }
+        }
+      }
+    },
+    "Max Heart Rate": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Max. hartslag"
+          }
+        }
+      }
+    },
+    "Mixed": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gemengd"
+          }
+        }
+      }
+    },
+    "Mixed stroke": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wisselslag"
+          }
+        }
+      }
+    },
+    "Mode": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Modus"
+          }
+        }
+      }
+    },
+    "Model": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Model"
+          }
+        }
+      }
+    },
+    "Model name": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Modelnaam"
+          }
+        }
+      }
+    },
+    "Moderate": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Matig"
+          }
+        }
+      }
+    },
+    "The AI did not return a usable workout: %@": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "De AI gaf geen bruikbare training terug: %@"
+          }
+        }
+      }
+    },
+    "Needs iOS 26 or later": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vereist iOS 26 of nieuwer"
+          }
+        }
+      }
+    },
+    "Next": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Volgende"
+          }
+        }
+      }
+    },
+    "Next time": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Volgende keer"
+          }
+        }
+      }
+    },
+    "No": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nee"
+          }
+        }
+      }
+    },
+    "No records yet": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nog geen records"
+          }
+        }
+      }
+    },
+    "No swims yet": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nog geen trainingen"
+          }
+        }
+      }
+    },
+    "No trends yet": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nog geen trends"
+          }
+        }
+      }
+    },
+    "No workouts yet": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nog geen trainingen"
+          }
+        }
+      }
+    },
+    "None": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Geen"
+          }
+        }
+      }
+    },
+    "Not set: swim the CSS test": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Niet ingesteld: zwem de CSS-test"
+          }
+        }
+      }
+    },
+    "Notes": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Notities"
+          }
+        }
+      }
+    },
+    "OK": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "OK"
+          }
+        }
+      }
+    },
+    "On-device": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "On-device"
+          }
+        }
+      }
+    },
+    "On-device AI is unavailable right now. Try again later": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AI op het toestel is nu niet beschikbaar. Probeer het later opnieuw"
+          }
+        }
+      }
+    },
+    "Swimlie keeps your swims on your devices. A swim summary leaves the phone only when you ask the AI to review it, and goes to the provider you chose.": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Swimlie bewaart je trainingen op je apparaten. Een samenvatting verlaat de telefoon alleen als je de AI om een review vraagt, en gaat dan naar de aanbieder die je koos."
+          }
+        }
+      }
+    },
+    "Optional. The AI keeps your choices above unless you ask to change them.": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Optioneel. De AI houdt je keuzes hierboven aan, tenzij je om een wijziging vraagt."
+          }
+        }
+      }
+    },
+    "Other…": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Andere…"
+          }
+        }
+      }
+    },
+    "Pace": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tempo"
+          }
+        }
+      }
+    },
+    "Pace per Length": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tempo per baan"
+          }
+        }
+      }
+    },
+    "Paddles": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Handpaddles"
+          }
+        }
+      }
+    },
+    "Paste": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Plakken"
+          }
+        }
+      }
+    },
+    "Personal records": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Persoonlijke records"
+          }
+        }
+      }
+    },
+    "Plan": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Plan"
+          }
+        }
+      }
+    },
+    "Plans": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Plannen"
+          }
+        }
+      }
+    },
+    "Pool length": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Badlengte"
+          }
+        }
+      }
+    },
+    "Progress": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Voortgang"
+          }
+        }
+      }
+    },
+    "Provider": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aanbieder"
+          }
+        }
+      }
+    },
+    "Pull buoy": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pullboei"
+          }
+        }
+      }
+    },
+    "Redo": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Opnieuw"
+          }
+        }
+      }
+    },
+    "Regular swimmer": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zwemt regelmatig"
+          }
+        }
+      }
+    },
+    "Rep %lld": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Herh. %lld"
+          }
+        }
+      }
+    },
+    "Repeat %lld×": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Herhaal %lld×"
+          }
+        }
+      }
+    },
+    "Reset to default": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Terugzetten naar standaard"
+          }
+        }
+      }
+    },
+    "Rest": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rust"
+          }
+        }
+      }
+    },
+    "Rest %@": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rust %@"
+          }
+        }
+      }
+    },
+    "Review": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Overzicht"
+          }
+        }
+      }
+    },
+    "Review prompt": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Prompt voor review"
+          }
+        }
+      }
+    },
+    "Review with AI": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Review met AI"
+          }
+        }
+      }
+    },
+    "SWOLF": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "SWOLF"
+          }
+        }
+      }
+    },
+    "SWOLF, lower is better": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "SWOLF, lager is beter"
+          }
+        }
+      }
+    },
+    "Save": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Opslaan"
+          }
+        }
+      }
+    },
+    "Send to watch": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Naar horloge sturen"
+          }
+        }
+      }
+    },
+    "Sent as the instruction with every review, to the on-device model or your provider. Keep the five section labels (Summary, Achievements, Progress, What to improve, Next time) to see them in bold.": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wordt bij elke review als instructie meegestuurd, naar het model op het toestel of je aanbieder. Houd de vijf kopjes (Summary, Achievements, Progress, What to improve, Next time) ongewijzigd om ze vet weer te geven."
+          }
+        }
+      }
+    },
+    "Sent to watch": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Naar horloge gestuurd"
+          }
+        }
+      }
+    },
+    "Session not found": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zwemsessie niet gevonden"
+          }
+        }
+      }
+    },
+    "Set": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Serie"
+          }
+        }
+      }
+    },
+    "Sets": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Series"
+          }
+        }
+      }
+    },
+    "Settings": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Instellingen"
+          }
+        }
+      }
+    },
+    "Shows the raw swim files.": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Toont de ruwe zwembestanden."
+          }
+        }
+      }
+    },
+    "Shuffle": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Schudden"
+          }
+        }
+      }
+    },
+    "Single swim": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Losse training"
+          }
+        }
+      }
+    },
+    "Snorkel": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Snorkel"
+          }
+        }
+      }
+    },
+    "Speed": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Snelheid"
+          }
+        }
+      }
+    },
+    "Sprint": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sprint"
+          }
+        }
+      }
+    },
+    "Standard": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Standaard"
+          }
+        }
+      }
+    },
+    "Starting blocks": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Startblokken"
+          }
+        }
+      }
+    },
+    "Step %lld of 5": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stap %lld van 5"
+          }
+        }
+      }
+    },
+    "Str": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sl."
+          }
+        }
+      }
+    },
+    "Stroke Rate": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Slagfrequentie"
+          }
+        }
+      }
+    },
+    "Strokes": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Slagen"
+          }
+        }
+      }
+    },
+    "Summary": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Samenvatting"
+          }
+        }
+      }
+    },
+    "Swim files": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zwembestanden"
+          }
+        }
+      }
+    },
+    "Swim time": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zwemtijd"
+          }
+        }
+      }
+    },
+    "Swim with Swimlie on your Apple Watch to see your trends here.": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zwem met Swimlie op je Apple Watch om hier je trends te zien."
+          }
+        }
+      }
+    },
+    "Swim with Swimlie on your Apple Watch; your swims sync here.": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zwem met Swimlie op je Apple Watch; je trainingen worden hier gesynchroniseerd."
+          }
+        }
+      }
+    },
+    "Swimmer level": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zwemniveau"
+          }
+        }
+      }
+    },
+    "Swims per week": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Trainingen per week"
+          }
+        }
+      }
+    },
+    "Swims per week: %lld": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Trainingen per week: %lld"
+          }
+        }
+      }
+    },
+    "Target": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Doel"
+          }
+        }
+      }
+    },
+    "Technique": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Techniek"
+          }
+        }
+      }
+    },
+    "The key is stored in the iOS Keychain and sent only to the chosen provider.": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "De sleutel wordt opgeslagen in de iOS-sleutelhanger en alleen naar de gekozen aanbieder gestuurd."
+          }
+        }
+      }
+    },
+    "The on-device model is downloading or starting up. This needs Wi-Fi and some free space; try again in a few minutes. Status: Settings › Apple Intelligence & Siri": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Het model op het toestel wordt gedownload of gestart. Dit vraagt om wifi en wat vrije ruimte; probeer het over een paar minuten opnieuw. Status: Instellingen › Apple Intelligence en Siri"
+          }
+        }
+      }
+    },
+    "The on-device model runs on this iPhone. Pick API to use a remote model instead.": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Het model draait op deze iPhone. Kies API om in plaats daarvan een model op afstand te gebruiken."
+          }
+        }
+      }
+    },
+    "This device does not support Apple Intelligence (iPhone 15 Pro or newer is needed)": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dit apparaat ondersteunt Apple Intelligence niet (iPhone 15 Pro of nieuwer is nodig)"
+          }
+        }
+      }
+    },
+    "This week": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Deze week"
+          }
+        }
+      }
+    },
+    "Threshold": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Drempel"
+          }
+        }
+      }
+    },
+    "Time": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tijd"
+          }
+        }
+      }
+    },
+    "Training Load": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Trainingsbelasting"
+          }
+        }
+      }
+    },
+    "Training load": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Trainingsbelasting"
+          }
+        }
+      }
+    },
+    "Training load %lld": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Trainingsbelasting %lld"
+          }
+        }
+      }
+    },
+    "Trends": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Trends"
+          }
+        }
+      }
+    },
+    "Updated automatically after a CSS test swim.": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wordt automatisch bijgewerkt na een CSS-testzwemming."
+          }
+        }
+      }
+    },
+    "Used for the paces of workouts when there is no CSS test.": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gebruikt voor de tempo's van trainingen als er geen CSS-test is."
+          }
+        }
+      }
+    },
+    "Version": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Versie"
+          }
+        }
+      }
+    },
+    "Watch how": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bekijk hoe"
+          }
+        }
+      }
+    },
+    "Watch how to do %@ on YouTube": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bekijk hoe je %@ doet op YouTube"
+          }
+        }
+      }
+    },
+    "Week of %@": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Week van %@"
+          }
+        }
+      }
+    },
+    "Weeks": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Weken"
+          }
+        }
+      }
+    },
+    "Weeks: %lld": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Weken: %lld"
+          }
+        }
+      }
+    },
+    "What to improve": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wat kan beter"
+          }
+        }
+      }
+    },
+    "Workout Details": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Trainingsdetails"
+          }
+        }
+      }
+    },
+    "Workout type": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Type training"
+          }
+        }
+      }
+    },
+    "Workouts": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Trainingen"
+          }
+        }
+      }
+    },
+    "Yes": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ja"
+          }
+        }
+      }
+    },
+    "Zone %lld": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zone %lld"
+          }
+        }
+      }
+    },
+    "e.g. easy 1500 with kick, I'm tired": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "bijv. rustig 1500 met kick, ik ben moe"
+          }
+        }
+      }
+    },
+    "e.g. mistral-small-latest": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "bijv. mistral-small-latest"
+          }
+        }
+      }
+    },
+    "estimated": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "geschat"
+          }
+        }
+      }
+    },
+    "every %@": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "elke %@"
+          }
+        }
+      }
+    },
+    "goal %@": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "doel %@"
+          }
+        }
+      }
+    },
+    "min": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "min"
+          }
+        }
+      }
+    },
+    "rest %@": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "rust %@"
+          }
+        }
+      }
+    },
+    "Avg": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gem."
+          }
+        }
+      }
+    },
+    "Max": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Max."
+          }
+        }
+      }
+    },
+    "Custom (OpenAI-compatible)": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aangepast (OpenAI-compatibel)"
+          }
+        }
+      }
+    },
+    "None selected: the coach picks the mix.": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Niets gekozen: de coach kiest de mix."
+          }
+        }
+      }
+    },
+    "The main sets are spread over these. IM needs sets of 4 lengths, butterfly stays short and easy.": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "De hoofdsets worden over deze verdeeld. Wisselslag heeft sets van 4 banen nodig, vlinderslag blijft kort en rustig."
+          }
+        }
+      }
+    },
+    "Import": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Importeren"
+          }
+        }
+      }
+    },
+    "Sends a summary of this swim to %@.": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stuurt een samenvatting van deze zwemtraining naar %@."
+          }
+        }
+      }
+    },
+    "Average %@, max %@ beats per minute": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gemiddeld %@, max %@ slagen per minuut"
+          }
+        }
+      }
+    },
+    "Week %lld": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Week %lld"
+          }
+        }
+      }
+    },
+    "Week %lld · %@": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Week %lld · %@"
+          }
+        }
+      }
+    }
+  },
+  "version": "1.0"
+}
