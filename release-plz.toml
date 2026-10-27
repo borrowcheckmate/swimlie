@@ -1,0 +1,10 @@
+[workspace]
+# The core is compiled into the apps, not published to crates.io: versions come from git tags.
+git_only = true
+git_release_enable = true
+git_tag_name = "v{{ version }}"
+changelog_path = "CHANGELOG.md"
+
+[[package]]
+name = "xtask"
+release = false
