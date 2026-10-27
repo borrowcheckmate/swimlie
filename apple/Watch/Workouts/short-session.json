@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "name": "Short session 1000",
+  "pool_length_m": 25,
+  "blocks": [
+    { "name": "Warm-up", "repeat": 1, "sets": [
+      { "reps": 1, "distance_m": 200, "stroke": "any", "intensity": "easy" } ] },
+    { "name": "Main", "repeat": 1, "sets": [
+      { "reps": 5, "distance_m": 100, "stroke": "freestyle", "intensity": "threshold",
+        "rest": { "type": "interval", "seconds": 120 } } ] },
+    { "name": "Kick", "repeat": 1, "sets": [
+      { "reps": 4, "distance_m": 50, "stroke": "kickboard", "intensity": "moderate",
+        "rest": { "type": "fixed", "seconds": 20 } } ] },
+    { "name": "Cool-down", "repeat": 1, "sets": [
+      { "reps": 1, "distance_m": 100, "stroke": "any", "intensity": "easy" } ] }
+  ]
+}

@@ -1,0 +1,243 @@
+{
+  "version": 1,
+  "name": "Base builder",
+  "weeks": [
+    {
+      "focus": "Build aerobic base",
+      "workouts": [
+        {
+          "version": 1,
+          "name": "Easy endurance",
+          "pool_length_m": 25,
+          "blocks": [
+            {
+              "name": "Warm-up",
+              "sets": [
+                {
+                  "reps": 1,
+                  "distance_m": 300,
+                  "stroke": "freestyle",
+                  "intensity": "easy",
+                  "rest": {
+                    "type": "fixed",
+                    "seconds": 20
+                  }
+                }
+              ]
+            },
+            {
+              "name": "Main",
+              "sets": [
+                {
+                  "reps": 5,
+                  "distance_m": 200,
+                  "stroke": "freestyle",
+                  "intensity": "easy",
+                  "rest": {
+                    "type": "fixed",
+                    "seconds": 25
+                  }
+                }
+              ]
+            },
+            {
+              "name": "Cool-down",
+              "sets": [
+                {
+                  "reps": 1,
+                  "distance_m": 200,
+                  "stroke": "any",
+                  "intensity": "easy",
+                  "rest": {
+                    "type": "fixed",
+                    "seconds": 0
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "version": 1,
+          "name": "Kick and pull",
+          "pool_length_m": 25,
+          "blocks": [
+            {
+              "name": "Warm-up",
+              "sets": [
+                {
+                  "reps": 1,
+                  "distance_m": 200,
+                  "stroke": "freestyle",
+                  "intensity": "easy",
+                  "rest": {
+                    "type": "fixed",
+                    "seconds": 20
+                  }
+                }
+              ]
+            },
+            {
+              "name": "Main",
+              "repeat": 2,
+              "sets": [
+                {
+                  "reps": 4,
+                  "distance_m": 50,
+                  "stroke": "kickboard",
+                  "intensity": "easy",
+                  "equipment": [
+                    "kickboard"
+                  ],
+                  "rest": {
+                    "type": "fixed",
+                    "seconds": 15
+                  }
+                },
+                {
+                  "reps": 4,
+                  "distance_m": 100,
+                  "stroke": "freestyle",
+                  "intensity": "easy",
+                  "equipment": [
+                    "pull_buoy"
+                  ],
+                  "rest": {
+                    "type": "fixed",
+                    "seconds": 20
+                  }
+                }
+              ]
+            },
+            {
+              "name": "Cool-down",
+              "sets": [
+                {
+                  "reps": 1,
+                  "distance_m": 200,
+                  "stroke": "any",
+                  "intensity": "easy",
+                  "rest": {
+                    "type": "fixed",
+                    "seconds": 0
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "focus": "Add steady volume",
+      "workouts": [
+        {
+          "version": 1,
+          "name": "Steady 200s",
+          "pool_length_m": 25,
+          "blocks": [
+            {
+              "name": "Warm-up",
+              "sets": [
+                {
+                  "reps": 1,
+                  "distance_m": 300,
+                  "stroke": "freestyle",
+                  "intensity": "easy",
+                  "rest": {
+                    "type": "fixed",
+                    "seconds": 20
+                  }
+                }
+              ]
+            },
+            {
+              "name": "Main",
+              "repeat": 3,
+              "sets": [
+                {
+                  "reps": 2,
+                  "distance_m": 200,
+                  "stroke": "freestyle",
+                  "intensity": "moderate",
+                  "rest": {
+                    "type": "fixed",
+                    "seconds": 25
+                  }
+                }
+              ]
+            },
+            {
+              "name": "Cool-down",
+              "sets": [
+                {
+                  "reps": 1,
+                  "distance_m": 300,
+                  "stroke": "any",
+                  "intensity": "easy",
+                  "rest": {
+                    "type": "fixed",
+                    "seconds": 0
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "version": 1,
+          "name": "Threshold 100s",
+          "pool_length_m": 25,
+          "blocks": [
+            {
+              "name": "Warm-up",
+              "sets": [
+                {
+                  "reps": 1,
+                  "distance_m": 300,
+                  "stroke": "freestyle",
+                  "intensity": "easy",
+                  "rest": {
+                    "type": "fixed",
+                    "seconds": 20
+                  }
+                }
+              ]
+            },
+            {
+              "name": "Main",
+              "sets": [
+                {
+                  "reps": 10,
+                  "distance_m": 100,
+                  "stroke": "freestyle",
+                  "intensity": "threshold",
+                  "goal_s": 100,
+                  "rest": {
+                    "type": "fixed",
+                    "seconds": 20
+                  }
+                }
+              ]
+            },
+            {
+              "name": "Cool-down",
+              "sets": [
+                {
+                  "reps": 1,
+                  "distance_m": 400,
+                  "stroke": "any",
+                  "intensity": "easy",
+                  "rest": {
+                    "type": "fixed",
+                    "seconds": 0
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

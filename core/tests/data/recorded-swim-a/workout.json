@@ -1,0 +1,21 @@
+{
+  "version": 1,
+  "name": "Recorded pool swim A",
+  "pool_length_m": 25,
+  "blocks": [
+    { "name": "Warm-up", "repeat": 1, "sets": [
+      { "reps": 4, "distance_m": 100, "stroke": "freestyle" } ] },
+    { "name": "Drills", "repeat": 1, "sets": [
+      { "reps": 8, "distance_m": 50, "stroke": "freestyle",
+        "notes": "Catch-up: touch hands every stroke" },
+      { "reps": 4, "distance_m": 100, "stroke": "freestyle",
+        "notes": "Per 100: 25 left arm only with underwater recovery, 25 right arm only with underwater recovery, 25 both arms with underwater recovery, 25 normal" } ] },
+    { "name": "Main", "repeat": 1, "sets": [
+      { "reps": 4, "distance_m": 100, "stroke": "freestyle" } ] },
+    { "name": "Cool-down", "repeat": 1, "sets": [
+      { "reps": 1, "distance_m": 100, "stroke": "breaststroke", "notes": "Reset" },
+      { "reps": 1, "distance_m": 100, "stroke": "mixed", "notes": "Individual medley" },
+      { "reps": 1, "distance_m": 100, "stroke": "any",
+        "notes": "Easy lengths to lower the heart rate; the length count is approximate" } ] }
+  ]
+}

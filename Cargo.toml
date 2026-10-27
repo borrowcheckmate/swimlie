@@ -1,0 +1,50 @@
+[workspace]
+members = ["core"]
+resolver = "2"
+
+[workspace.package]
+version = "0.1.0"
+edition = "2024"
+license = "EUPL-1.2"
+rust-version = "1.90"
+
+[workspace.lints.rust]
+unsafe_code = "deny"
+missing_debug_implementations = "warn"
+unused_qualifications = "warn"
+unreachable_pub = "warn"
+
+[workspace.lints.clippy]
+all = { level = "deny", priority = -1 }
+pedantic = { level = "deny", priority = -1 }
+nursery = { level = "deny", priority = -1 }
+cargo = { level = "deny", priority = -1 }
+# Restriction lints picked one by one.
+allow_attributes_without_reason = "deny"
+dbg_macro = "deny"
+expect_used = "deny"
+panic = "deny"
+print_stderr = "deny"
+print_stdout = "deny"
+string_slice = "deny"
+todo = "deny"
+undocumented_unsafe_blocks = "deny"
+unimplemented = "deny"
+unwrap_used = "deny"
+# Deliberate exceptions, each with a reason.
+# Signatures already say `Result`/`Option`; the extra doc sections only restate them.
+missing_errors_doc = "allow"
+missing_panics_doc = "allow"
+# Pace, distance and time maths on small bounded values; checked conversions would bury the formulas.
+cast_possible_truncation = "allow"
+cast_possible_wrap = "allow"
+cast_precision_loss = "allow"
+cast_sign_loss = "allow"
+# Conflicts with `unreachable_pub`; the explicit `pub(crate)` stays.
+redundant_pub_crate = "allow"
+# A held connection guard is the point: one call is one critical section.
+significant_drop_tightening = "allow"
+# Same module-qualified names read better in the Swift bindings.
+module_name_repetitions = "allow"
+# Transitive duplicates are outside this repo's control.
+multiple_crate_versions = "allow"

@@ -1,0 +1,18 @@
+{
+  "version": 1,
+  "name": "CSS test",
+  "pool_length_m": 25,
+  "blocks": [
+    { "name": "Warm-up", "repeat": 1, "sets": [
+      { "reps": 1, "distance_m": 400, "stroke": "any", "intensity": "easy" },
+      { "reps": 4, "distance_m": 50, "stroke": "freestyle", "intensity": "moderate", "notes": "Build each 50",
+        "rest": { "type": "fixed", "seconds": 15 } } ] },
+    { "name": "400 m time trial", "repeat": 1, "sets": [
+      { "reps": 1, "distance_m": 400, "stroke": "freestyle", "intensity": "sprint", "notes": "All out, even pace",
+        "rest": { "type": "fixed", "seconds": 300 } } ] },
+    { "name": "200 m time trial", "repeat": 1, "sets": [
+      { "reps": 1, "distance_m": 200, "stroke": "freestyle", "intensity": "sprint", "notes": "All out" } ] },
+    { "name": "Cool-down", "repeat": 1, "sets": [
+      { "reps": 1, "distance_m": 200, "stroke": "any", "intensity": "easy" } ] }
+  ]
+}

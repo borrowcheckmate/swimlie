@@ -1,0 +1,22 @@
+{
+  "version": 1,
+  "name": "Recorded pool swim B (laps 72-109)",
+  "pool_length_m": 25,
+  "blocks": [
+    { "name": "Main 1", "repeat": 1, "sets": [
+      { "reps": 8, "distance_m": 50, "stroke": "freestyle",
+        "rest": { "type": "fixed", "seconds": 20 },
+        "notes": "Paddles. Rest not recorded; measured gaps 17-26 s" } ] },
+    { "name": "Recovery", "repeat": 1, "sets": [
+      { "reps": 1, "distance_m": 100, "stroke": "any", "intensity": "easy",
+        "notes": "HealthKit labelled every length kickboard" } ] },
+    { "name": "Main 2", "repeat": 1, "sets": [
+      { "reps": 4, "distance_m": 50, "stroke": "freestyle",
+        "rest": { "type": "fixed", "seconds": 20 }, "notes": "Paddles" },
+      { "reps": 4, "distance_m": 50, "stroke": "breaststroke",
+        "rest": { "type": "fixed", "seconds": 20 } } ] },
+    { "name": "Cool-down", "repeat": 1, "sets": [
+      { "reps": 1, "distance_m": 75, "stroke": "breaststroke", "intensity": "easy",
+        "notes": "The length count is approximate" } ] }
+  ]
+}

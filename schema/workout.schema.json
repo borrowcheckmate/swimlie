@@ -1,0 +1,200 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Workout",
+  "type": "object",
+  "properties": {
+    "blocks": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/Block"
+      }
+    },
+    "description": {
+      "description": "Short coach note about the swim, e.g. from the AI creator. Optional.",
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "name": {
+      "type": "string"
+    },
+    "pool_length_m": {
+      "type": "integer",
+      "format": "uint32",
+      "minimum": 0
+    },
+    "version": {
+      "type": "integer",
+      "format": "uint32",
+      "minimum": 0
+    }
+  },
+  "additionalProperties": false,
+  "required": [
+    "version",
+    "name",
+    "pool_length_m",
+    "blocks"
+  ],
+  "$defs": {
+    "Block": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "repeat": {
+          "type": "integer",
+          "format": "uint32",
+          "default": 1,
+          "minimum": 0
+        },
+        "sets": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/WorkoutSet"
+          }
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "sets"
+      ]
+    },
+    "Equipment": {
+      "description": "Swim toys a set uses.",
+      "type": "string",
+      "enum": [
+        "fins",
+        "paddles",
+        "pull_buoy",
+        "kickboard",
+        "snorkel"
+      ]
+    },
+    "Intensity": {
+      "type": "string",
+      "enum": [
+        "easy",
+        "moderate",
+        "threshold",
+        "hard",
+        "sprint"
+      ]
+    },
+    "Rest": {
+      "type": "object",
+      "properties": {
+        "seconds": {
+          "type": "integer",
+          "format": "uint32",
+          "minimum": 0
+        },
+        "type": {
+          "$ref": "#/$defs/RestKind"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "type",
+        "seconds"
+      ]
+    },
+    "RestKind": {
+      "oneOf": [
+        {
+          "description": "Start the next rep every `seconds`.",
+          "type": "string",
+          "const": "interval"
+        },
+        {
+          "description": "Rest `seconds` after finishing the rep.",
+          "type": "string",
+          "const": "fixed"
+        }
+      ]
+    },
+    "Stroke": {
+      "description": "Matches `HealthKit`'s swimming stroke styles, plus `Any`.",
+      "type": "string",
+      "enum": [
+        "any",
+        "freestyle",
+        "backstroke",
+        "breaststroke",
+        "butterfly",
+        "mixed",
+        "kickboard"
+      ]
+    },
+    "WorkoutSet": {
+      "description": "Named `WorkoutSet` because `Set` clashes with Swift's `Set`; JSON is unaffected.",
+      "type": "object",
+      "properties": {
+        "distance_m": {
+          "type": "integer",
+          "format": "uint32",
+          "minimum": 0
+        },
+        "drill": {
+          "description": "Exercise id from the catalogue (`exercises()`), e.g. \"catch-up\".",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "equipment": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Equipment"
+          }
+        },
+        "goal_s": {
+          "description": "Target time per rep in seconds.",
+          "type": [
+            "integer",
+            "null"
+          ],
+          "format": "uint32",
+          "minimum": 0
+        },
+        "intensity": {
+          "$ref": "#/$defs/Intensity",
+          "default": "easy"
+        },
+        "notes": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "reps": {
+          "type": "integer",
+          "format": "uint32",
+          "default": 1,
+          "minimum": 0
+        },
+        "rest": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Rest"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "stroke": {
+          "$ref": "#/$defs/Stroke",
+          "default": "any"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "distance_m"
+      ]
+    }
+  }
+}

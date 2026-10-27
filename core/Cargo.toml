@@ -1,0 +1,30 @@
+[package]
+name = "swimlie-core"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+publish = false
+
+[lib]
+crate-type = ["lib", "staticlib"]
+
+[[bin]]
+name = "uniffi-bindgen"
+path = "src/bin/uniffi-bindgen.rs"
+
+[lints]
+workspace = true
+
+[dependencies]
+rusqlite = { version = "0.37", features = ["bundled"] }
+schemars = "1"
+serde = { version = "1", features = ["derive"] }
+serde_json = { version = "1", features = ["float_roundtrip"] }
+thiserror = "2"
+uniffi = { version = "0.32", features = ["cli"] }
+uuid = { version = "1", features = ["v4"] }
+
+# ring (under rustls) does not build for watchOS (arm64_32); the watch never calls the AI, so it gets a stub.
+[target.'cfg(not(target_os = "watchos"))'.dependencies]
+ureq = { version = "3", default-features = false, features = ["rustls", "json"] }
