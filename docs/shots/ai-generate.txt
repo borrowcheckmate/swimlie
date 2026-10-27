@@ -1,0 +1,87 @@
+```json
+{
+  "version": 1,
+  "name": "Easy Endurance 1500 with Kick",
+  "pool_length_m": 25,
+  "description": "A relaxed 45-minute endurance swim with some kick to keep it engaging while respecting your current fatigue. Focus on easy pacing and smooth technique.",
+  "blocks": [
+    {
+      "name": "Warm-up",
+      "repeat": 1,
+      "sets": [
+        {
+          "reps": 1,
+          "distance_m": 200,
+          "stroke": "any",
+          "intensity": "easy",
+          "notes": "Ease into the swim with mixed strokes."
+        },
+        {
+          "reps": 4,
+          "distance_m": 25,
+          "stroke": "kickboard",
+          "intensity": "easy",
+          "rest": {
+            "type": "fixed",
+            "seconds": 10
+          },
+          "notes": "Focus on steady, relaxed kicking."
+        }
+      ]
+    },
+    {
+      "name": "Main Set",
+      "repeat": 1,
+      "sets": [
+        {
+          "reps": 6,
+          "distance_m": 100,
+          "stroke": "freestyle",
+          "intensity": "easy",
+          "goal_s": 110,
+          "rest": {
+            "type": "interval",
+            "seconds": 120
+          },
+          "notes": "Keep it easy and consistent. Focus on smooth strokes."
+        },
+        {
+          "reps": 4,
+          "distance_m": 50,
+          "stroke": "kickboard",
+          "intensity": "easy",
+          "rest": {
+            "type": "fixed",
+            "seconds": 15
+          },
+          "notes": "Mix up your kick style (flutter, dolphin, or breaststroke kick)."
+        },
+        {
+          "reps": 4,
+          "distance_m": 100,
+          "stroke": "freestyle",
+          "intensity": "easy",
+          "goal_s": 110,
+          "rest": {
+            "type": "interval",
+            "seconds": 120
+          }
+        }
+      ]
+    },
+    {
+      "name": "Cool-down",
+      "repeat": 1,
+      "sets": [
+        {
+          "reps": 1,
+          "distance_m": 200,
+          "stroke": "any",
+          "intensity": "easy",
+          "notes": "Relax and stretch out your strokes."
+        }
+      ]
+    }
+  ]
+}
+```
