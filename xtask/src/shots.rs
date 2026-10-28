@@ -106,7 +106,9 @@ pub(crate) fn run() -> Result<(), String> {
                     &[][..]
                 }),
         )?;
-        thread::sleep(Duration::from_secs(3));
+        // The detail screens snapshot a map, which fades in late.
+        let settle = if demo.starts_with("detail") { 10 } else { 3 };
+        thread::sleep(Duration::from_secs(settle));
         exec(Command::new("xcrun").args([
             "simctl",
             "io",
