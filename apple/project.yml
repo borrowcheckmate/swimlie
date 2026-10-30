@@ -7,6 +7,11 @@ options:
   deploymentTarget:
     iOS: "17.0"
     watchOS: "11.0"
+settings:
+  base:
+    # Release version from the Cargo workspace (`cargo xtask project`); `testflight` sets a unique build number.
+    MARKETING_VERSION: "${SWIMLIE_VERSION}"
+    CURRENT_PROJECT_VERSION: "1"
 packages:
   SwimlieCore:
     path: SwimlieCore
@@ -40,6 +45,8 @@ targets:
       path: iOS/Info.plist
       properties:
         CFBundleDisplayName: Swimlie
+        CFBundleShortVersionString: $(MARKETING_VERSION)
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
         UILaunchScreen: {}
         NSHealthShareUsageDescription: Swimlie reads your swim workouts to show history and stats.
         NSHealthUpdateUsageDescription: Swimlie saves your swim workouts to Health.
@@ -80,6 +87,8 @@ targets:
       path: Watch/Info.plist
       properties:
         CFBundleDisplayName: Swimlie
+        CFBundleShortVersionString: $(MARKETING_VERSION)
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
         WKApplication: true
         WKRunsIndependentlyOfCompanionApp: true
         WKCompanionAppBundleIdentifier: com.swimlie.swimlie
