@@ -1,0 +1,5 @@
+[advisories]
+ignore = [
+    # Unmaintained, not vulnerable. Pulled in by uniffi's code generator; goes away when uniffi drops it.
+    { id = "RUSTSEC-2026-0374", reason = "build-time dependency of uniffi_bindgen, no maintained replacement upstream" },
+]

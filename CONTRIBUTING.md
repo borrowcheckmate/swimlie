@@ -27,4 +27,5 @@
 - Commits follow [Conventional Commits](https://www.conventionalcommits.org): `feat:`, `fix:`, `docs:`, `chore:`, `refactor:`, `test:`, `ci:`, `build:`. The commit-msg hook and CI enforce it.
 - No trailers or attribution lines in commit messages or pull request descriptions.
 - Releases are automatic: [release-plz](https://release-plz.dev) opens a release pull request from the commit messages (version bump and `CHANGELOG.md`), and merging it tags the release and creates the GitHub release. Do not bump versions or edit the changelog by hand.
+- Dependabot opens weekly grouped updates (`build(deps)` for crates, `ci(deps)` for actions). The `security` workflow runs CodeQL and `cargo deny check advisories`; an advisory with no fix goes in `deny.toml` with a reason.
 - Set the `RELEASE_PLZ_TOKEN` repository secret to a token that can open pull requests, so CI runs on the release pull request; without it the workflow falls back to `GITHUB_TOKEN`.
