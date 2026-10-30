@@ -87,18 +87,25 @@ struct LiveView: View {
         [a.block, a.round, a.set, a.rep].lexicographicallyPrecedes([b.block, b.round, b.set, b.rep])
     }
 
-    /// `age`: seconds since `s` was computed. The app's own timer can stall with the wrist down, so clocks add it themselves; awake, a second clock would restart the ring animation twice a second.
-    @ViewBuilder private func screen(_ s: SwimState, age: Double) -> some View {
+    @ViewBuilder private func screen(_ s: SwimState, _ now: Date) -> some View {
         switch s.phase {
-        case .swimming: swimming(s, age)
-        case .resting: if let left = s.restRemainingS { resting(s, max(0, left - age)) } else { paused(s) }
+        case .swimming: swimming(s, wristDown ? max(0, now.timeIntervalSince(session.stateDate)) : 0)
+        case .resting: if let rem = s.restRemainingS { resting(s, restLeft(s, rem, now)) } else { paused(s) }
         case .done: done(s)
         }
     }
 
+    /// Rest left at `now`. Awake the ring steps from the last tick and animates. With the wrist down the rest counts from its absolute end, in whole seconds, so the ring steps with the digits.
+    private func restLeft(_ s: SwimState, _ rem: Double, _ now: Date) -> Double {
+        guard wristDown else { return max(0, rem) }
+        return max(0, session.stateDate.addingTimeInterval(rem).timeIntervalSince(now).rounded())
+    }
+
     /// Progress readable from the corner of the eye: a swim fills up to its goal time (orange past it, by metres without a goal). Rest and start use the circle.
     @ViewBuilder private func filled(_ s: SwimState) -> some View {
-        let content = TimelineView(.periodic(from: .now, by: 1)) { ctx in screen(s, age: wristDown ? max(0, ctx.date.timeIntervalSince(session.stateDate)) : 0) }
+        // With the wrist down, redraws land on whole seconds from the rest's end (or from the last tick): the timer is throttled there, so free-running redraws step unevenly.
+        let anchor = wristDown ? session.stateDate.addingTimeInterval(s.restRemainingS ?? 0) : .now
+        let content = TimelineView(PeriodicTimelineSchedule(from: anchor, by: 1)) { ctx in screen(s, ctx.date) }
             .padding(.horizontal, 14).padding(.vertical, 8).frame(maxWidth: .infinity, maxHeight: .infinity)
         switch s.phase {
         case .swimming where fills:
@@ -414,7 +421,7 @@ private struct RestCountdown: View {
                 .stroke(blue ? Color.accent : (lastRep?.verdict?.color ?? .accent), style: StrokeStyle(lineWidth: 12, lineCap: .round))
                 .padding(6)
                 .rotationEffect(.degrees(-90))
-                .animation(.linear(duration: 1), value: frac)
+                .animation(wristDown ? nil : .linear(duration: 1), value: frac) // Always On shows no animation: each whole-second step would jump
                 .animation(.easeInOut(duration: 0.6), value: blue)
             VStack(spacing: 2) {
                 if lastRep == nil { Text("GET READY").font(.system(.caption, design: .rounded, weight: .bold)).foregroundStyle(Color.accent).multilineTextAlignment(.center).minimumScaleFactor(0.6) }
