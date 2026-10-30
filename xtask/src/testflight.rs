@@ -6,9 +6,6 @@ use super::{
 /// Archives a Release iPhone build (watch app embedded) and uploads it to App Store Connect for `TestFlight`.
 /// `SWIMLIE_ASC_KEY_PATH` may be a plain .p8 path or an `op://` reference, which is written to a temporary file.
 pub(crate) fn testflight() -> Result<(), String> {
-    setting("SWIMLIE_BUNDLE_ID").ok_or(
-        "SWIMLIE_BUNDLE_ID is not set (a bundle id registered to your team, see .env.example)",
-    )?;
     let key_id = setting("SWIMLIE_ASC_KEY_ID")
         .ok_or("SWIMLIE_ASC_KEY_ID is not set (App Store Connect API key id, see .env.example)")?;
     let issuer = setting("SWIMLIE_ASC_ISSUER_ID").ok_or(

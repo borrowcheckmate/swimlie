@@ -89,12 +89,6 @@ pub(crate) fn op_download(reference: &str, path: &str) -> Result<(), String> {
         .map_err(|e| format!("cannot restrict {path}: {e}"))
 }
 
-/// The iPhone app's bundle id from `SWIMLIE_BUNDLE_ID`; the watch app's adds `.watchkitapp`. Bundle ids are unique
-/// across Apple, so a device or `TestFlight` build needs one registered to your team; the default only suits the simulator.
-pub(crate) fn bundle_id() -> String {
-    setting("SWIMLIE_BUNDLE_ID").unwrap_or_else(|| "com.swimlie.swimlie".to_string())
-}
-
 /// The Apple developer team id used for signing, from `SWIMLIE_TEAM_ID`.
 pub(crate) fn team_id() -> Result<String, String> {
     setting("SWIMLIE_TEAM_ID").ok_or_else(|| {

@@ -41,7 +41,7 @@ use frames::frames;
 use lint::lint;
 use process::{describe, env_cmd, fail, remove_dir_if_exists, run, run_logged, usage_exit};
 use recorder::{brief, laps};
-use settings::{bundle_id, op_download, parse_dotenv, raw_setting, setting, team_id};
+use settings::{op_download, parse_dotenv, raw_setting, setting, team_id};
 use sim::{record, sim};
 use testflight::testflight;
 use xcode::{project, test, xcframework};
@@ -54,6 +54,7 @@ const UNIT_SCHEME: &str = "SwimlieWatchTests"; // scheme and target of the unit 
 const UI_SCHEME: &str = "SwimlieWatchUITests"; // scheme and target of the UI tests (project.yml)
 const UI_RESULT: &str = "build/test-ui.xcresult";
 const WATCH_SIM_UDID: &str = "CF1B4B17-942E-49DC-ACE5-6FC23D196F52";
+const WATCH_BUNDLE_ID: &str = "com.swimlie.swimlie.watchkitapp";
 const RECORD_REPLAY: &str = "recorded-swim-b"; // default replay of `record`
 const RECORD_FILE: &str = "build/sim.mp4";
 const USAGE: &str = "usage: cargo xtask <command>
