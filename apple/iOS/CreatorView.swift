@@ -38,6 +38,7 @@ struct CreatorView: View {
     @State private var swimsPerWeek = 3
     @State private var request = ""
     @State private var aiBusy = false
+    @State private var aiFixing = false
     @State private var aiRecheck = 0
     @State private var aiReasonValue: String? // filled off the main thread by the .task below, never during render
     @State private var aiChecked = false // false until the first check lands; the button then reads Next
@@ -84,7 +85,7 @@ struct CreatorView: View {
                 Button {
                     if step == 4 { generate() } else if aiNeeded { askAI() } else { askFocused = false; step += 1 }
                 } label: {
-                    if aiBusy { ProgressView().padding(.horizontal, 8) }
+                    if aiBusy { HStack { ProgressView(); if aiFixing { Text("Fixing the workout…") } }.padding(.horizontal, 8) }
                     else {
                         let title: LocalizedStringKey = step == 4 ? "Generate" : aiNeeded ? "Generate with AI" : "Next"
                         Label(title, systemImage: step == 4 ? "wand.and.stars" : aiNeeded ? "sparkles" : "chevron.right").font(.headline).lineLimit(1).minimumScaleFactor(0.7).padding(.horizontal, 8)
@@ -242,7 +243,7 @@ struct CreatorView: View {
             if request.isEmpty && aiChecked && aiReason == nil {
                 Section {
                     Button { askAI() } label: {
-                        HStack { Spacer(); if aiBusy { ProgressView() } else { Label("Generate with AI", systemImage: "sparkles") }; Spacer() }
+                        HStack { Spacer(); if aiBusy { ProgressView(); if aiFixing { Text("Fixing the workout…") } } else { Label("Generate with AI", systemImage: "sparkles") }; Spacer() }
                     }
                     .disabled(aiBusy)
                 }
@@ -301,11 +302,26 @@ struct CreatorView: View {
         aiBusy = true
         aiError = nil
         let parts = aiPromptParts
+        let generation = AIGeneration(system: parts.system, user: parts.user)
         Task {
+            defer { aiFixing = false }
             do {
-                let reply = try await AIAssistant.generate(system: parts.system, user: parts.user)
-                let imported = fillMissingRest(parsed: try parseImport(json: AIAssistant.jsonObject(in: reply)))
-                try checkEquipment(import: imported, allowed: inputs.equipment)
+                var reply = try await generation.ask()
+                var rounds = 0
+                // A rejected workout goes back to the AI with its error, at most twice; then the error shows.
+                let imported: Import
+                while true {
+                    do {
+                        let parsed = fillMissingRest(parsed: try parseImport(json: AIAssistant.jsonObject(in: reply)))
+                        try checkEquipment(import: parsed, allowed: inputs.equipment)
+                        imported = parsed
+                        break
+                    } catch let error as WorkoutError where rounds < 2 {
+                        rounds += 1
+                        aiFixing = true
+                        reply = try await generation.fix(reply: reply, error: error.localizedDescription)
+                    }
+                }
                 aiBusy = false
                 library.previewNote = nil
                 library.preview = imported

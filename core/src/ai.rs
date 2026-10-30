@@ -179,6 +179,57 @@ pub fn ai_review(
     extract_review(&post(&url, &api_key, &body)?)
 }
 
+/// The follow-up asking the AI to correct a rejected reply. Only the error's first line goes back.
+#[uniffi::export]
+#[must_use]
+pub fn ai_fix_prompt(error: String) -> String {
+    let first = error.lines().next().unwrap_or_default().trim();
+    format!("That reply was rejected: {first}. Reply with the corrected JSON only.")
+}
+
+/// Builds the correction request: the original turn, the rejected reply, then `ai_fix_prompt`. Pure, so it can be
+/// tested without a network.
+#[must_use]
+pub fn fix_body(
+    model: &str,
+    system: &str,
+    user: &str,
+    reply: &str,
+    error: &str,
+) -> serde_json::Value {
+    let mut body = review_body(model, user, system);
+    if let Some(messages) = body["messages"].as_array_mut() {
+        messages.push(serde_json::json!({ "role": "assistant", "content": reply }));
+        messages.push(
+            serde_json::json!({ "role": "user", "content": ai_fix_prompt(error.to_string()) }),
+        );
+    }
+    body
+}
+
+/// A rejected generation: the original turn, the reply and why it was rejected.
+#[derive(Debug, Clone, uniffi::Record)]
+pub struct AiFix {
+    pub system: String,
+    pub user: String,
+    pub reply: String,
+    pub error: String,
+}
+
+/// Asks the endpoint to correct a rejected reply, in the same conversation as `ai_review` with `system` as the
+/// prompt and `user` as the brief.
+#[uniffi::export]
+pub fn ai_fix(
+    endpoint: String,
+    api_key: String,
+    model: String,
+    fix: AiFix,
+) -> Result<String, AiError> {
+    let url = format!("{}/chat/completions", endpoint.trim().trim_end_matches('/'));
+    let body = fix_body(&model, &fix.system, &fix.user, &fix.reply, &fix.error).to_string();
+    extract_review(&post(&url, &api_key, &body)?)
+}
+
 /// Receives the review text as it grows, one call per chunk with everything so far.
 #[uniffi::export(with_foreign)]
 pub trait ReviewSink: Send + Sync {

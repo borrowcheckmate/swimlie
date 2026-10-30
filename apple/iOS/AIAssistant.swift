@@ -45,7 +45,7 @@ enum AIAssistant {
     }
 
     /// The endpoint, key and model of the chosen API provider (Settings), with the provider's preset as fallback.
-    private static func remoteSettings() -> (endpoint: String, key: String, model: String) {
+    fileprivate static func remoteSettings() -> (endpoint: String, key: String, model: String) {
         let d = UserDefaults.standard
         let providerId = d.string(forKey: "aiProvider") ?? "mistral"
         // @AppStorage defaults are not written to UserDefaults, so fall back to the provider's preset.
@@ -104,31 +104,58 @@ enum AIAssistant {
         return text
     }
 
-    /// Asks the chosen engine to write a workout or plan from the prompt. `system` holds the instructions and schema,
-    /// `user` the form and the swimmer's request. Returns the raw reply; `jsonObject(in:)` cleans it up.
-    static func generate(system: String, user: String) async throws -> String {
-        #if DEBUG
-        if let text = replay("GENERATE") { return text }
-        #endif
-        if UserDefaults.standard.string(forKey: "aiEngine") == "api" {
-            let remote = remoteSettings()
-            let out = try await Task.detached(priority: .userInitiated) {
-                try aiReview(endpoint: remote.endpoint, apiKey: remote.key, model: remote.model, brief: user, prompt: system)
-            }.value
-            #if DEBUG
-            record("GENERATE", out)
-            #endif
-            return out
-        }
-        guard #available(iOS 26, *) else { throw AIAssistantError.unavailable(String(localized: "Needs iOS 26 or later")) }
-        if let reason = unavailableReason { throw AIAssistantError.unavailable(reason) }
-        let session = LanguageModelSession(instructions: system)
-        return try await session.respond(to: user).content
-    }
-
     /// The JSON object in a reply: from its first "{" to its last "}", so code fences and prose around it are dropped.
     static func jsonObject(in reply: String) -> String {
         guard let start = reply.firstIndex(of: "{"), let end = reply.lastIndex(of: "}"), start <= end else { return reply }
         return String(reply[start...end])
+    }
+}
+
+/// One request for a workout or plan. `system` holds the instructions and schema, `user` the form and the swimmer's
+/// request. A rejected reply goes back with `fix`: the API gets the whole turn again, the on-device model keeps its session.
+final class AIGeneration {
+    private let system: String
+    private let user: String
+    private var session: Any? // LanguageModelSession (iOS 26), kept for the corrections
+
+    init(system: String, user: String) { self.system = system; self.user = user }
+
+    /// The raw reply; `AIAssistant.jsonObject(in:)` cleans it up.
+    func ask() async throws -> String {
+        #if DEBUG
+        if let text = AIAssistant.replay("GENERATE") { return text }
+        #endif
+        let (system, user) = (system, user)
+        if UserDefaults.standard.string(forKey: "aiEngine") == "api" {
+            let remote = AIAssistant.remoteSettings()
+            let out = try await Task.detached(priority: .userInitiated) {
+                try aiReview(endpoint: remote.endpoint, apiKey: remote.key, model: remote.model, brief: user, prompt: system)
+            }.value
+            #if DEBUG
+            AIAssistant.record("GENERATE", out)
+            #endif
+            return out
+        }
+        guard #available(iOS 26, *) else { throw AIAssistantError.unavailable(String(localized: "Needs iOS 26 or later")) }
+        if let reason = AIAssistant.unavailableReason { throw AIAssistantError.unavailable(reason) }
+        let s = LanguageModelSession(instructions: system)
+        session = s
+        return try await s.respond(to: user).content
+    }
+
+    /// A corrected reply for `reply`, which was rejected with `error`.
+    func fix(reply: String, error: String) async throws -> String {
+        #if DEBUG
+        if let text = AIAssistant.replay("GENERATE") { return text }
+        #endif
+        let (system, user) = (system, user)
+        if UserDefaults.standard.string(forKey: "aiEngine") == "api" {
+            let remote = AIAssistant.remoteSettings()
+            return try await Task.detached(priority: .userInitiated) {
+                try aiFix(endpoint: remote.endpoint, apiKey: remote.key, model: remote.model, fix: AiFix(system: system, user: user, reply: reply, error: error))
+            }.value
+        }
+        guard #available(iOS 26, *), let s = session as? LanguageModelSession else { throw AIAssistantError.unavailable(String(localized: "Needs iOS 26 or later")) }
+        return try await s.respond(to: aiFixPrompt(error: error)).content
     }
 }
