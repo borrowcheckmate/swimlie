@@ -11,6 +11,7 @@ final class SwimSession: NSObject, SwimSessionModel, HKWorkoutSessionDelegate, H
     var state: State? { driver.state }
     private(set) var saved: Session?
     private(set) var ended = false
+    private(set) var saving = false
     private(set) var error: String?
     private(set) var heartRate: Double?
     private(set) var ageYears: UInt32?
@@ -121,6 +122,8 @@ final class SwimSession: NSObject, SwimSessionModel, HKWorkoutSessionDelegate, H
             if driver.engine == nil, error != nil { ended = true } // start failed: let the live view close
             return
         }
+        log.write("end", ["date": Date().timeIntervalSince1970])
+        saving = true // first, so the live screen shows it before the first save step
         self.hkSession = nil // ending: a second end() (double tap, or the .ended delegate) must not save twice
         timer?.invalidate()
         timer = nil
@@ -130,19 +133,22 @@ final class SwimSession: NSObject, SwimSessionModel, HKWorkoutSessionDelegate, H
         Task {
             var errors: [String] = []
             do { // HK and DB saves are independent: a failure in one must not skip the other
-                try await builder.endCollection(at: endDate)
+                try await logged("endCollection") { try await builder.endCollection(at: endDate) }
                 driver.feed(laps: lapEvents(builder.workoutEvents)) // a lap 5–9 s late at End
-                _ = try await builder.finishWorkout()
+                _ = try await logged("finishWorkout") { try await builder.finishWorkout() }
             } catch { errors.append("Health save failed: \(error.localizedDescription)") }
             var session = engine.session()
             session.ageYears = ageYears
             session.location = locator.location
-            do { try await fillStrokes(&session, until: endDate) } // sums of HealthKit's own counts; without them the laps just have no strokes
+            do { try await logged("strokes") { try await fillStrokes(&session, until: endDate) } } // sums of HealthKit's own counts; without them the laps just have no strokes
             catch { errors.append("Stroke counts failed: \(error.localizedDescription)") }
-            try? await fillHeartRate(&session, until: endDate) // HealthKit has every sample, even ones collected before a relaunch; live ones stay on failure or none
-            do { _ = try db.saveSession(id: nil, session: session); driver.clearPending(); Sync.send() }
-            catch { errors.append("Database save failed: \(error.localizedDescription)") }
+            try? await logged("heartRate") { try await fillHeartRate(&session, until: endDate) } // HealthKit has every sample, even ones collected before a relaunch; live ones stay on failure or none
+            do {
+                _ = try await logged("database") { try db.saveSession(id: nil, session: session) }
+                driver.clearPending(); Sync.send()
+            } catch { errors.append("Database save failed: \(error.localizedDescription)") }
             saved = session
+            saving = false
             ended = true
             let all = ([self.error] + errors).compactMap { $0 } // keeps a session failure message
             if !all.isEmpty { self.error = all.joined(separator: "; ") }
@@ -151,6 +157,13 @@ final class SwimSession: NSObject, SwimSessionModel, HKWorkoutSessionDelegate, H
             driver.release()
             self.builder = nil
         }
+    }
+
+    /// Runs one save step and logs how long it took, failures included, so the swim log shows which step is slow.
+    private func logged<T>(_ step: String, _ work: () async throws -> T) async throws -> T {
+        let began = Date()
+        defer { log.write("save", ["step": step, "seconds": Date().timeIntervalSince(began)]) }
+        return try await work()
     }
 
     /// HealthKit's lap events as plain values; the stroke style is read here so the driver never sees HealthKit types.

@@ -34,7 +34,9 @@ struct LiveView: View {
 
     private var live: some View {
         ZStack {
-            if let s = session.state {
+            if session.saving {
+                savingScreen
+            } else if let s = session.state {
                 filled(s)
                     .id(key(s))
                     .transition(screenTransition(s))
@@ -48,13 +50,16 @@ struct LiveView: View {
         .onChange(of: session.state) { old, new in
             if let o = old, let n = new { fromTop = before(n.pos, o.pos) } else { fromTop = false } // auto advances go forward
         }
+        .onChange(of: session.saving) { _, saving in
+            if saving { WKInterfaceDevice.current().play(.stop) } // the swimmer feels the end press land
+        }
         .onReceive(NotificationCenter.default.publisher(for: .NSProcessInfoPowerStateDidChange).receive(on: RunLoop.main)) { _ in
             lowPower = ProcessInfo.processInfo.isLowPowerModeEnabled
         }
     }
 
     private func turned() {
-        guard armed, abs(crown) >= 0.9 * crownTravel else { return } // same point where the gauge turns white
+        guard armed, !session.saving, abs(crown) >= 0.9 * crownTravel else { return } // same point where the gauge turns white; crown turns while saving do nothing
         armed = false
         if crown > 0 { up() } else { down() }
     }
@@ -154,6 +159,17 @@ struct LiveView: View {
             Text("swim to resume").font(.footnote).foregroundStyle(.secondary)
             Spacer(minLength: 0)
         }
+    }
+
+    /// From the end press until the swim is saved (a few seconds: HealthKit queries).
+    private var savingScreen: some View {
+        VStack(spacing: 8) {
+            Spacer(minLength: 0)
+            ProgressView()
+            Text("Saving…").font(.system(.headline, design: .rounded, weight: .bold))
+            Spacer(minLength: 0)
+        }
+        .padding(.horizontal, 14).padding(.vertical, 8)
     }
 
     private func done(_ s: SwimState) -> some View {
