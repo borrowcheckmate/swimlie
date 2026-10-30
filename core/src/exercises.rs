@@ -389,6 +389,11 @@ pub(crate) fn exercise_ids() -> impl Iterator<Item = &'static str> {
     CATALOGUE.iter().map(|e| e.id)
 }
 
+/// Gear a drill needs; `None` for an id not in the catalogue.
+pub(crate) fn drill_equipment(id: &str) -> Option<&'static [Equipment]> {
+    CATALOGUE.iter().find(|e| e.id == id).map(|e| e.equipment)
+}
+
 /// Entry `n` (rotating) of the kinds the swimmer can do: gear in `have`, no breath-hold entries (the coach cannot
 /// know the swimmer is not alone), starts only with blocks. None if nothing fits.
 pub(crate) fn pick(

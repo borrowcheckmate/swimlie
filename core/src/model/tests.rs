@@ -159,3 +159,70 @@ fn schema_up_to_date() {
 fn plan_schema_up_to_date() {
     check_schema::<Plan>("plan.schema.json", PLAN_SCHEMA);
 }
+
+fn gear_error(import: Import, allowed: Vec<Equipment>) -> String {
+    match check_equipment(import, allowed) {
+        Err(WorkoutError::Invalid { msg }) => msg,
+        other => panic!("expected an invalid workout, got {other:?}"),
+    }
+}
+
+#[test]
+fn equipment_check_covers_sets_and_drills() {
+    let w = parse_workout(EXAMPLE.into()).unwrap();
+    let import = || Import::Workout { workout: w.clone() };
+    // The Main set uses pull buoy and paddles.
+    assert!(check_equipment(import(), vec![Equipment::PullBuoy, Equipment::Paddles]).is_ok());
+    assert_eq!(
+        gear_error(import(), vec![Equipment::Fins]),
+        "block 'Main': uses pull buoy, paddles, allowed: fins"
+    );
+    assert_eq!(
+        gear_error(import(), vec![]),
+        "block 'Main': uses pull buoy, paddles, allowed: none"
+    );
+
+    // A drill's gear counts too: front-scull needs a pull buoy.
+    let with_drill = EXAMPLE.replacen(
+        "\"distance_m\": 400",
+        "\"distance_m\": 400, \"drill\": \"front-scull\"",
+        1,
+    );
+    let w = parse_workout(with_drill).unwrap();
+    let import = || Import::Workout { workout: w.clone() };
+    assert_eq!(
+        gear_error(import(), vec![Equipment::Paddles]),
+        "block 'Warm-up': uses pull buoy, allowed: paddles"
+    );
+    assert!(check_equipment(import(), vec![Equipment::PullBuoy, Equipment::Paddles]).is_ok());
+    // A drill without gear is fine with no equipment at all.
+    let no_gear = EXAMPLE.replacen(
+        "\"distance_m\": 400",
+        "\"distance_m\": 400, \"drill\": \"catch-up\"",
+        1,
+    );
+    let mut w = parse_workout(no_gear).unwrap();
+    w.blocks[1].sets[0].equipment.clear();
+    assert!(check_equipment(Import::Workout { workout: w }, vec![]).is_ok());
+}
+
+#[test]
+fn equipment_check_covers_every_plan_workout() {
+    let mut p = parse_plan(PLAN.into()).unwrap();
+    p.weeks[1].workouts[0].blocks[0].sets[0].equipment = vec![Equipment::Fins];
+    let import = || Import::Plan { plan: p.clone() };
+    // The plan already uses kickboard and pull buoy in week 1.
+    let all = vec![Equipment::Fins, Equipment::Kickboard, Equipment::PullBuoy];
+    assert!(check_equipment(import(), all).is_ok());
+    assert_eq!(
+        gear_error(import(), vec![Equipment::Kickboard, Equipment::PullBuoy]),
+        "week 2, workout 1: block 'Warm-up': uses fins, allowed: kickboard, pull buoy"
+    );
+
+    // A drill in the first week's first workout is reported there.
+    let mut p = parse_plan(PLAN.into()).unwrap();
+    p.weeks[0].workouts[0].blocks[0].sets[0].drill = Some("kick-race".into());
+    let msg = gear_error(Import::Plan { plan: p.clone() }, vec![Equipment::Fins]);
+    assert!(msg.starts_with("week 1, workout 1: block"), "{msg}");
+    assert!(msg.ends_with("uses kickboard, allowed: fins"), "{msg}");
+}

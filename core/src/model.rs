@@ -370,6 +370,58 @@ pub fn parse_import(json: String) -> Result<Import, WorkoutError> {
     })
 }
 
+/// Gear a generated workout may use: every set's equipment and drill gear must be in `allowed`.
+///
+/// Checked after `parse_import`, for AI output only: the swimmer picked the gear, the AI was only asked to use it.
+#[uniffi::export]
+pub fn check_equipment(import: Import, allowed: Vec<Equipment>) -> Result<(), WorkoutError> {
+    let problem = match import {
+        Import::Workout { workout } => first_gear_problem(&workout, &allowed),
+        Import::Plan { plan } => plan.weeks.iter().enumerate().find_map(|(w, week)| {
+            week.workouts.iter().enumerate().find_map(|(i, workout)| {
+                first_gear_problem(workout, &allowed)
+                    .map(|msg| format!("week {}, workout {}: {msg}", w + 1, i + 1))
+            })
+        }),
+    };
+    problem.map_or(Ok(()), |msg| Err(invalid(msg)))
+}
+
+fn first_gear_problem(w: &Workout, allowed: &[Equipment]) -> Option<String> {
+    w.blocks.iter().find_map(|b| {
+        b.sets.iter().find_map(|s| {
+            let drill = s
+                .drill
+                .as_deref()
+                .and_then(crate::exercises::drill_equipment)
+                .unwrap_or(&[]);
+            let mut missing: Vec<&Equipment> = Vec::new();
+            for g in s.equipment.iter().chain(drill) {
+                if !allowed.contains(g) && !missing.contains(&g) {
+                    missing.push(g);
+                }
+            }
+            (!missing.is_empty()).then(|| {
+                format!(
+                    "block '{}': uses {}, allowed: {}",
+                    b.name,
+                    gear_list(missing.into_iter().copied()),
+                    gear_list(allowed.iter().copied())
+                )
+            })
+        })
+    })
+}
+
+fn gear_list(gear: impl Iterator<Item = Equipment>) -> String {
+    let names: Vec<String> = gear.map(|g| crate::metrics::schema_name(&g)).collect();
+    if names.is_empty() {
+        "none".into()
+    } else {
+        names.join(", ")
+    }
+}
+
 /// The fixed id a plan's workout is sent to the watch under, so the swum Session's `workout_id` links back to the plan.
 #[uniffi::export]
 #[must_use]
