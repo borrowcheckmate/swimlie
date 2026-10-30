@@ -230,6 +230,7 @@ pub fn creator_brief(inputs: CreatorInputs, profile: SwimmerProfile) -> String {
         "no dives"
     };
     request.push(format!("- Starting blocks: {blocks}"));
+    request.push("- Every set needs a rest, the same rules as the built-in coach (see the prompt): interval = goal_s + rest for repeated timed sets, fixed for a single rep, sprints and warm-up, cool-down, kick and drill sets.".to_string());
     if !inputs.notes.trim().is_empty() {
         request.push(format!("- Notes: {}", inputs.notes.trim()));
     }

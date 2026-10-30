@@ -1,6 +1,6 @@
 use super::{
-    Equipment, Exercise, ExerciseKind, Intensity, Rest, RestKind, Stroke, SwimLevel, WorkoutSet,
-    metrics, pick,
+    DEFAULT_REST_S, Equipment, Exercise, ExerciseKind, Intensity, Rest, RestKind, Stroke,
+    SwimLevel, WorkoutSet, metrics, pick,
 };
 
 pub(super) struct Slot {
@@ -188,7 +188,7 @@ pub(super) fn exercise_set(e: &Exercise, reps: u32, pool: u32) -> WorkoutSet {
         distance_m: round_to_pool(f64::from(e.rep_m), pool).max(min_m),
         stroke: Stroke::Any,
         intensity: Intensity::Easy,
-        rest: fixed(20),
+        rest: fixed(DEFAULT_REST_S),
         goal_s: None,
         equipment: e.equipment.clone(),
         drill: Some(e.id.clone()),

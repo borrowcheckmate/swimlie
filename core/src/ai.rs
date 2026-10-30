@@ -5,6 +5,9 @@ use std::io::{BufRead, BufReader, Read};
 use std::sync::Arc;
 use std::time::Duration;
 
+use crate::coach::DEFAULT_REST_S;
+use crate::model::{Import, Rest, RestKind, Workout};
+
 const SYSTEM_PROMPT: &str = "You fill in a swim workout form from the swimmer's request. Reply with one JSON object only, \
 with exactly these keys: isPlan (bool, true for a multi-week plan), poolLength (25 or 50), equipment (array, only from: \
 Fins, Paddles, Pull buoy, Kickboard, Snorkel), startingBlocks (bool), byTime (bool, true for time, false for distance), \
@@ -94,6 +97,33 @@ pub fn ai_choices(
     let url = format!("{}/chat/completions", endpoint.trim().trim_end_matches('/'));
     let body = request_body(&model, &text, &current).to_string();
     extract_choices(&post(&url, &api_key, &body)?)
+}
+
+/// Gives every set the AI left without a `rest` the coach's default, so no AI set runs straight into the next.
+/// Only for AI replies: a normal import keeps the file as written.
+#[uniffi::export]
+#[must_use]
+pub fn fill_missing_rest(parsed: Import) -> Import {
+    let fill = |w: &mut Workout| {
+        for set in w.blocks.iter_mut().flat_map(|b| b.sets.iter_mut()) {
+            set.rest.get_or_insert(Rest {
+                kind: RestKind::Fixed,
+                seconds: DEFAULT_REST_S,
+            });
+        }
+    };
+    match parsed {
+        Import::Workout { mut workout } => {
+            fill(&mut workout);
+            Import::Workout { workout }
+        }
+        Import::Plan { mut plan } => {
+            for workout in plan.weeks.iter_mut().flat_map(|w| w.workouts.iter_mut()) {
+                fill(workout);
+            }
+            Import::Plan { plan }
+        }
+    }
 }
 
 const REVIEW_PROMPT: &str = "You are a warm, encouraging swim coach reviewing one swim for the swimmer. You get a brief of the \

@@ -178,6 +178,11 @@ fn creator_brief_without_history_or_targets() {
     assert!(brief.contains("- No swim history yet: base everything on my level."));
     assert!(brief.lines().any(|l| l == "- Equipment: none"));
     assert!(brief.lines().any(|l| l == "- Starting blocks: no dives"));
+    assert!(
+        brief
+            .lines()
+            .any(|l| l.starts_with("- Every set needs a rest"))
+    );
     for absent in [
         "Target",
         "Notes",

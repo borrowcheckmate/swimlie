@@ -1,3 +1,5 @@
+use crate::model::parse_import;
+
 #[test]
 fn review_uses_custom_prompt_or_default() {
     assert_eq!(
@@ -145,4 +147,76 @@ fn rejects_bad_replies() {
         extract_choices(not_object),
         Err(AiError::Reply { .. })
     ));
+}
+
+const WORKOUT_NO_REST: &str = r#"{"version":1,"name":"Mixed","pool_length_m":25,"blocks":[{"name":"Main","sets":[
+    {"reps":4,"distance_m":100,"rest":{"type":"interval","seconds":120}},
+    {"distance_m":200},
+    {"distance_m":50,"rest":{"type":"fixed","seconds":30}}]}]}"#;
+
+const PLAN_NO_REST: &str = r#"{"version":1,"name":"Two weeks","weeks":[
+    {"focus":"Base","workouts":[{"version":1,"name":"A","pool_length_m":25,"blocks":[{"name":"Main","sets":[{"distance_m":100},{"distance_m":50,"rest":{"type":"fixed","seconds":10}}]}]}]},
+    {"workouts":[{"version":1,"name":"B","pool_length_m":25,"blocks":[{"name":"Main","sets":[{"distance_m":200}]}]}]}]}"#;
+
+#[test]
+fn fill_missing_rest_fills_only_sets_without_one_in_a_workout() {
+    let parsed = parse_import(WORKOUT_NO_REST.into()).unwrap();
+    let Import::Workout { workout } = fill_missing_rest(parsed) else {
+        panic!("expected a workout");
+    };
+    let rests: Vec<_> = workout.blocks[0]
+        .sets
+        .iter()
+        .map(|s| s.rest.clone())
+        .collect();
+    assert_eq!(
+        rests,
+        vec![
+            Some(Rest {
+                kind: RestKind::Interval,
+                seconds: 120
+            }),
+            Some(Rest {
+                kind: RestKind::Fixed,
+                seconds: DEFAULT_REST_S
+            }),
+            Some(Rest {
+                kind: RestKind::Fixed,
+                seconds: 30
+            }),
+        ]
+    );
+}
+
+#[test]
+fn fill_missing_rest_fills_every_workout_in_a_plan() {
+    let parsed = parse_import(PLAN_NO_REST.into()).unwrap();
+    let Import::Plan { plan } = fill_missing_rest(parsed) else {
+        panic!("expected a plan");
+    };
+    let fixed_default = Some(Rest {
+        kind: RestKind::Fixed,
+        seconds: DEFAULT_REST_S,
+    });
+    let first = &plan.weeks[0].workouts[0].blocks[0].sets;
+    assert_eq!(first[0].rest, fixed_default);
+    assert_eq!(first[1].rest.as_ref().map(|r| r.seconds), Some(10));
+    let second = &plan.weeks[1].workouts[0].blocks[0].sets;
+    assert_eq!(second[0].rest, fixed_default);
+    assert!(plan.validate().is_ok());
+}
+
+#[test]
+fn normal_import_keeps_missing_rest_as_written() {
+    let Import::Workout { workout } = parse_import(WORKOUT_NO_REST.into()).unwrap() else {
+        panic!("expected a workout");
+    };
+    assert_eq!(workout.blocks[0].sets[1].rest, None);
+}
+
+#[test]
+fn prompt_says_every_set_needs_a_rest() {
+    let prompt = include_str!("../../../schema/prompt.md");
+    assert!(prompt.contains("Every set needs a `rest`"));
+    assert!(prompt.contains("warm-up, cool-down, kick and drill sets get `fixed` 15–20 s"));
 }
