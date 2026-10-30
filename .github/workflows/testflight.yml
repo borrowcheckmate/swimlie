@@ -1,0 +1,45 @@
+name: testflight
+
+# Called by release.yml for every release; can also be started by hand from the Actions tab.
+on:
+  workflow_call:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: testflight
+  cancel-in-progress: false
+
+jobs:
+  upload:
+    runs-on: macos-26
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # the apps embed `git describe`
+      - uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: latest-stable
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+      - name: Install XcodeGen
+        run: brew install xcodegen
+      - name: Archive and upload
+        env:
+          SWIMLIE_TEAM_ID: ${{ secrets.SWIMLIE_TEAM_ID }}
+          SWIMLIE_ASC_KEY_ID: ${{ secrets.SWIMLIE_ASC_KEY_ID }}
+          SWIMLIE_ASC_ISSUER_ID: ${{ secrets.SWIMLIE_ASC_ISSUER_ID }}
+          ASC_KEY: ${{ secrets.SWIMLIE_ASC_KEY }}
+        run: |
+          export SWIMLIE_ASC_KEY_PATH="$RUNNER_TEMP/asc-key.p8"
+          printf '%s\n' "$ASC_KEY" > "$SWIMLIE_ASC_KEY_PATH"
+          cargo xtask testflight
+      - name: Keep the build logs
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: testflight-logs
+          path: build/*.log

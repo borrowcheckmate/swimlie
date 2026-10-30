@@ -13,17 +13,26 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+    outputs:
+      created: ${{ steps.release.outputs.releases_created }}
     steps:
       - uses: actions/checkout@v7
         with:
           fetch-depth: 0
       - uses: dtolnay/rust-toolchain@stable
       - name: Tag and publish the GitHub release
+        id: release
         uses: release-plz/action@v0.5
         with:
           command: release
         env:
           GITHUB_TOKEN: ${{ secrets.RELEASE_PLZ_TOKEN || secrets.GITHUB_TOKEN }}
+
+  testflight:
+    needs: release
+    if: needs.release.outputs.created == 'true'
+    uses: ./.github/workflows/testflight.yml
+    secrets: inherit
 
   release-pr:
     runs-on: ubuntu-latest

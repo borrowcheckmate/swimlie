@@ -158,7 +158,8 @@ pub(crate) fn project() -> Result<(), String> {
     }
     run(Command::new("xcodegen")
         .current_dir("apple")
-        .env("SWIMLIE_TEAM_ID", team_id()?))?;
+        .env("SWIMLIE_TEAM_ID", team_id()?)
+        .env("SWIMLIE_VERSION", env!("CARGO_PKG_VERSION")))?;
     println!("project: generated apple/Swimlie.xcodeproj");
     Ok(())
 }
