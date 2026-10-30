@@ -109,9 +109,9 @@ struct WorkoutRow: View {
 struct LibraryView: View {
     @ObservedObject var library: Library
     @AppStorage("allowCopyPaste") private var allowCopyPaste = false
-    @State private var choosingFile = false
-    @State private var onWatch: String? // id of the workout last sent to the watch
-    @State private var path: [String] = demoCreator ? ["creator"] : [] // "creator" pushes CreatorView, "plan:<id>" a PlanView, "preview" the generated one
+    @SwiftUI.State private var choosingFile = false
+    @SwiftUI.State private var onWatch: String? // id of the workout last sent to the watch
+    @SwiftUI.State private var path: [String] = demoCreator ? ["creator"] : [] // "creator" pushes CreatorView, "plan:<id>" a PlanView, "preview" the generated one
 
     private func send(_ w: StoredWorkout) {
         do { try Sync.sendWorkout(w); onWatch = w.id } catch { library.error = error.localizedDescription }

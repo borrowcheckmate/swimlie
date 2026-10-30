@@ -8,10 +8,10 @@ struct RootView: View {
     let session: any SwimSessionModel
     @AppStorage("sentWorkoutId") private var sentId = "" // written by Sync.receiveWorkout
     @AppStorage("sentWorkoutJSON") private var sentJSON = ""
-    @State private var swimming = false // Done on the summary returns to the picker
+    @SwiftUI.State private var swimming = false // Done on the summary returns to the picker
     @AppStorage("saveLocation") private var saveLocation = false
     @AppStorage("waterLock") private var waterLock = true
-    @State private var asker = CLLocationManager() // kept alive while the permission prompt is up
+    @SwiftUI.State private var asker = CLLocationManager() // kept alive while the permission prompt is up
     let recorderView: AnyView
 
     private var sent: StoredWorkout? {

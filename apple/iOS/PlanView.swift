@@ -12,7 +12,7 @@ func planWorkoutIds(_ plan: StoredPlan) -> [String] {
 struct PlanView: View {
     let plan: StoredPlan
     @ObservedObject var library: Library
-    @State private var onWatch: String? // id of the workout last sent to the watch
+    @SwiftUI.State private var onWatch: String? // id of the workout last sent to the watch
 
     private func send(_ id: String, _ workout: Workout) {
         do { try Sync.sendWorkout(StoredWorkout(id: id, createdAtMs: 0, updatedAtMs: 0, workout: workout)); onWatch = id } catch { library.error = error.localizedDescription }

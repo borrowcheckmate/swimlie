@@ -6,16 +6,16 @@ import SwiftUI
 
 struct SessionDetailView: View {
     let id: String
-    @State private var stored: StoredSession?
-    @State private var css: Double?
-    @State private var error: String?
+    @SwiftUI.State private var stored: StoredSession?
+    @SwiftUI.State private var css: Double?
+    @SwiftUI.State private var error: String?
     @AppStorage("aiEngine") private var aiEngine = "on-device"
     @AppStorage("aiProvider") private var aiProvider = "mistral"
     @AppStorage("aiEndpoint") private var aiEndpoint = "https://api.mistral.ai/v1"
     @AppStorage("aiModel") private var aiModel = ""
-    @State private var aiText: String?
-    @State private var aiBusy = false
-    @State private var aiError: String?
+    @SwiftUI.State private var aiText: String?
+    @SwiftUI.State private var aiBusy = false
+    @SwiftUI.State private var aiError: String?
 
     var body: some View {
         if let stored {
@@ -221,7 +221,7 @@ private struct AIReviewCard: View {
     let reason: String?
     let note: String?
     let redo: () -> Void
-    @State private var open = false
+    @SwiftUI.State private var open = false
 
     /// Stray markdown (e.g. **bold**) renders as bold, and each of the five labels is bold. Line breaks are kept. Falls back to plain text.
     private func reviewText(_ text: String) -> AttributedString {
@@ -242,7 +242,7 @@ private struct AIReviewCard: View {
         return out
     }
 
-    @State private var fullHeight: CGFloat = 0
+    @SwiftUI.State private var fullHeight: CGFloat = 0
     private let peekHeight: CGFloat = 96
 
     var body: some View {
@@ -337,7 +337,7 @@ private struct StatGrid: View {
 /// Pool name from the start position (shown once reverse geocoding answers), and a small map of the spot.
 private struct PoolPlace: View {
     let location: Location
-    @State private var name: String?
+    @SwiftUI.State private var name: String?
 
     var body: some View {
         let spot = CLLocationCoordinate2D(latitude: location.lat, longitude: location.lon)
@@ -492,12 +492,12 @@ private func setTitle(_ workout: Workout, _ m: SetMetrics) -> String {
 private struct RepRow: View {
     let rep: RepMetrics
     let laps: [LapMetrics]
-    @State private var open: Bool
+    @SwiftUI.State private var open: Bool
 
     init(rep: RepMetrics, laps: [LapMetrics], open: Bool) {
         self.rep = rep
         self.laps = laps
-        _open = State(initialValue: open)
+        _open = SwiftUI.State(initialValue: open)
     }
 
     var body: some View {

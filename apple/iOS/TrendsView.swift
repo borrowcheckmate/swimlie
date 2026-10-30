@@ -3,10 +3,10 @@ import SwimlieCore
 import SwiftUI
 
 struct TrendsView: View {
-    @State private var trend: [Trend] = []
-    @State private var records: [PersonalRecord] = []
-    @State private var weeks: [WeekTotal] = []
-    @State private var error: String?
+    @SwiftUI.State private var trend: [Trend] = []
+    @SwiftUI.State private var records: [PersonalRecord] = []
+    @SwiftUI.State private var weeks: [WeekTotal] = []
+    @SwiftUI.State private var error: String?
 
     var body: some View {
         // Each card's headline is the newest session that has that number.

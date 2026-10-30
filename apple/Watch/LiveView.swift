@@ -7,15 +7,15 @@ struct LiveView: View {
     let session: any SwimSessionModel
     let css: Double?
     let onEnd: () -> Void
-    @State private var page = 1 // live; 0 = controls, to the left like the Workout app
-    @State private var crown = 0.0 // how far the crown is turned, -crownTravel...crownTravel
+    @SwiftUI.State private var page = 1 // live; 0 = controls, to the left like the Workout app
+    @SwiftUI.State private var crown = 0.0 // how far the crown is turned, -crownTravel...crownTravel
     private let crownTravel = 2.0 // tune: bigger = more turning needed; 1.0 fired too easily in the pool
-    @State private var armed = true // one action per crown turn
-    @State private var fromTop = false // last crown direction: the new screen comes in from there
+    @SwiftUI.State private var armed = true // one action per crown turn
+    @SwiftUI.State private var fromTop = false // last crown direction: the new screen comes in from there
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @Environment(\.isLuminanceReduced) private var wristDown
     @Environment(\.dynamicTypeSize) private var textSize
-    @State private var lowPower = ProcessInfo.processInfo.isLowPowerModeEnabled
+    @SwiftUI.State private var lowPower = ProcessInfo.processInfo.isLowPowerModeEnabled
 
     /// The color fill costs battery (lit pixels): plain black in Low Power Mode. With the wrist down it stays, the wave frozen.
     private var fills: Bool { !lowPower }
@@ -280,7 +280,7 @@ private struct LastRep: View {
     var showsTime = true
     var showsStats = true
     var compact = false // inside the rest ring: the chord is narrow
-    @State private var shown = false
+    @SwiftUI.State private var shown = false
     @Environment(\.isLuminanceReduced) private var wristDown
     @Environment(\.dynamicTypeSize) private var textSize
 
@@ -341,7 +341,7 @@ struct Filled<Content: View>: View {
     let frac: Double
     let color: Color
     @ViewBuilder let content: Content
-    @State private var shift = 0.0 // one loop of the waves; shared, so the three layers stay in step
+    @SwiftUI.State private var shift = 0.0 // one loop of the waves; shared, so the three layers stay in step
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     var body: some View {
@@ -415,7 +415,7 @@ private struct RestCountdown: View {
     let lastRep: RepResult?
     let set: WorkoutSet? // the last rep's set: goal and intensity
     let ageYears: UInt32?
-    @State private var total: Double // the rest length when this screen appeared
+    @SwiftUI.State private var total: Double // the rest length when this screen appeared
     @Environment(\.isLuminanceReduced) private var wristDown
 
     init(left: Double, lastRep: RepResult?, set: WorkoutSet?, ageYears: UInt32?) {
@@ -423,7 +423,7 @@ private struct RestCountdown: View {
         self.lastRep = lastRep
         self.set = set
         self.ageYears = ageYears
-        _total = State(initialValue: max(left, 1))
+        _total = SwiftUI.State(initialValue: max(left, 1))
     }
 
     private let d = WKInterfaceDevice.current().screenBounds.height * 0.62 // about 60% of the screen height, on every watch size
