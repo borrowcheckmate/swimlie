@@ -1,6 +1,7 @@
 use super::{
     Command, NIGHTLY_DEFAULT, PROJECT, Path, SystemTime, UI_RESULT, UI_SCHEME, UNIT_SCHEME,
-    WATCH_SIM_UDID, env, env_cmd, fs, remove_dir_if_exists, run, run_logged, team_id, usage_exit,
+    WATCH_SIM_UDID, bundle_id, env, env_cmd, fs, remove_dir_if_exists, run, run_logged, team_id,
+    usage_exit,
 };
 
 #[expect(
@@ -159,6 +160,7 @@ pub(crate) fn project() -> Result<(), String> {
     run(Command::new("xcodegen")
         .current_dir("apple")
         .env("SWIMLIE_TEAM_ID", team_id()?)
+        .env("SWIMLIE_BUNDLE_ID", bundle_id())
         .env("SWIMLIE_VERSION", env!("CARGO_PKG_VERSION")))?;
     println!("project: generated apple/Swimlie.xcodeproj");
     Ok(())

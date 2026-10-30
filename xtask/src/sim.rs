@@ -1,6 +1,6 @@
 use super::{
-    Command, Duration, PROJECT, Path, RECORD_FILE, RECORD_REPLAY, Stdio, WATCH_BUNDLE_ID,
-    WATCH_SCHEME, WATCH_SIM_UDID, describe, fs, project, run, run_logged, thread, usage_exit,
+    Command, Duration, PROJECT, Path, RECORD_FILE, RECORD_REPLAY, Stdio, WATCH_SCHEME,
+    WATCH_SIM_UDID, bundle_id, describe, fs, project, run, run_logged, thread, usage_exit,
 };
 
 /// Arguments shared by `sim` and `record`; they become launch arguments of the watch app.
@@ -55,7 +55,8 @@ pub(crate) fn build_and_launch(o: &SimOpts) -> Result<(), String> {
     run(Command::new("xcrun").args(["simctl", "install", WATCH_SIM_UDID, &app]))?;
 
     let mut launch = Command::new("xcrun");
-    launch.args(["simctl", "launch", WATCH_SIM_UDID, WATCH_BUNDLE_ID]);
+    launch.args(["simctl", "launch", WATCH_SIM_UDID]);
+    launch.arg(format!("{}.watchkitapp", bundle_id()));
     if let Some(name) = &o.replay {
         launch.args(["-replay", name]);
     }
