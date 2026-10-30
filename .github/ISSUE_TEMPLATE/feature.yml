@@ -1,0 +1,30 @@
+name: Feature or task
+description: Something to build, change or clean up.
+labels: [enhancement]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What and why
+      description: One or two sentences. What changes for the swimmer or the codebase, and why it matters.
+    validations:
+      required: true
+  - type: textarea
+    id: approach
+    attributes:
+      label: How to approach it
+      description: Where to start, so someone new can pick it up. Name the files, functions and commands involved; a rough plan is enough.
+      placeholder: |
+        - Start in `core/src/...`: ...
+        - Expose it via UniFFI and use it in `apple/iOS/...`
+        - Test with `cargo test` / `cargo xtask test unit`
+    validations:
+      required: true
+  - type: textarea
+    id: done
+    attributes:
+      label: Done when
+      description: A short checklist that makes the pull request reviewable.
+      placeholder: |
+        - [ ] ...
+        - [ ] Tests cover ...

@@ -8,10 +8,11 @@
 
 ## Workflow
 
-1. Branch from `main` and open a pull request. Nothing is pushed to `main` directly.
-2. `cargo test` and `cargo xtask lint` pass locally; CI runs the same.
-3. After changing the model: `UPDATE_SCHEMA=1 cargo test` regenerates the schema in `schema/`.
-4. After changing Swift: `cargo xtask test`, and read the screenshots it saves in `build/`.
+1. Work starts from an issue. Pick an open one (`good first issue` is a good start) or open one with the templates: what and why, how to approach it, done when. Keep it short, but name the files and commands so someone new can pick it up.
+2. Branch from `main` and open a pull request that says `Closes #<issue>`. Nothing is pushed to `main` directly.
+3. `cargo test` and `cargo xtask lint` pass locally; CI runs the same.
+4. After changing the model: `UPDATE_SCHEMA=1 cargo test` regenerates the schema in `schema/`.
+5. After changing Swift: `cargo xtask test`, and read the screenshots it saves in `build/`.
 
 ## Code
 
