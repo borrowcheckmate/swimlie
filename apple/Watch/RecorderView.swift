@@ -4,8 +4,8 @@ import SwiftUI
 /// The recorder spike: the home list when idle, then the live page of the swim with Stop on the controls page.
 struct RecorderView: View {
     @ObservedObject var recorder: Recorder
-    @State private var poolLength = 25
-    @State private var page = 1 // live; 0 = controls, to the left like LiveView
+    @SwiftUI.State private var poolLength = 25
+    @SwiftUI.State private var page = 1 // live; 0 = controls, to the left like LiveView
     @Environment(\.isLuminanceReduced) private var wristDown
 
     var body: some View {

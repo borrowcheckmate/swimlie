@@ -14,16 +14,16 @@ struct CreatorView: View {
     private let gearOptions: [(Equipment, String)] = [(.fins, "Fins"), (.paddles, "Paddles"), (.pullBuoy, "Pull buoy"), (.kickboard, "Kickboard"), (.snorkel, "Snorkel")]
     private let kinds = ["easy recovery", "endurance", "threshold", "speed", "technique", "mixed"]
 
-    @State private var step = 0 // 0 What, 1 How much, 2 Gear & strokes, 3 Anything else (Ask AI), 4 Review
+    @SwiftUI.State private var step = 0 // 0 What, 1 How much, 2 Gear & strokes, 3 Anything else (Ask AI), 4 Review
     @FocusState private var askFocused: Bool
-    @State private var poolLength: UInt32 = 25
-    @State private var gear: Set<Equipment> = []
-    @State private var startingBlocks = false
-    @State private var byTime = true
-    @State private var distance = 1500.0
-    @State private var minutes = 45.0
-    @State private var restPercent = 0.0
-    @State private var strokes: Set<Stroke> = []
+    @SwiftUI.State private var poolLength: UInt32 = 25
+    @SwiftUI.State private var gear: Set<Equipment> = []
+    @SwiftUI.State private var startingBlocks = false
+    @SwiftUI.State private var byTime = true
+    @SwiftUI.State private var distance = 1500.0
+    @SwiftUI.State private var minutes = 45.0
+    @SwiftUI.State private var restPercent = 0.0
+    @SwiftUI.State private var strokes: Set<Stroke> = []
     private let strokeOptions: [(Stroke, String)] = [(.freestyle, "Freestyle"), (.backstroke, "Backstroke"), (.breaststroke, "Breaststroke"), (.butterfly, "Butterfly"), (.mixed, "IM")]
     /// The amount of a target, with " per swim" for a plan.
     private func amountText(time: Bool) -> String {
@@ -31,20 +31,20 @@ struct CreatorView: View {
         return isPlan ? String(localized: "\(Int(distance)) m per swim") : String(localized: "\(Int(distance)) m")
     }
     @AppStorage("creatorKind") private var kind = "endurance"
-    @State private var notes = ""
-    @State private var copied = false
-    @State private var isPlan = false
-    @State private var weeks = 6
-    @State private var swimsPerWeek = 3
-    @State private var request = ""
-    @State private var aiBusy = false
-    @State private var aiFixing = false
-    @State private var aiRecheck = 0
-    @State private var aiReasonValue: String? // filled off the main thread by the .task below, never during render
-    @State private var aiChecked = false // false until the first check lands; the button then reads Next
-    @State private var aiError: String?
+    @SwiftUI.State private var notes = ""
+    @SwiftUI.State private var copied = false
+    @SwiftUI.State private var isPlan = false
+    @SwiftUI.State private var weeks = 6
+    @SwiftUI.State private var swimsPerWeek = 3
+    @SwiftUI.State private var request = ""
+    @SwiftUI.State private var aiBusy = false
+    @SwiftUI.State private var aiFixing = false
+    @SwiftUI.State private var aiRecheck = 0
+    @SwiftUI.State private var aiReasonValue: String? // filled off the main thread by the .task below, never during render
+    @SwiftUI.State private var aiChecked = false // false until the first check lands; the button then reads Next
+    @SwiftUI.State private var aiError: String?
     #if DEBUG
-    @State private var demoDone = false // the demo generates once, not again when coming back from the preview
+    @SwiftUI.State private var demoDone = false // the demo generates once, not again when coming back from the preview
     #endif
 
     var body: some View {

@@ -5,7 +5,7 @@ import SwiftUI
 struct SwimlieApp: App {
     @StateObject private var receiver: Receiver // init activates WCSession at launch
     @StateObject private var library = Library()
-    @State private var selection = Tab.workouts
+    @SwiftUI.State private var selection = Tab.workouts
     @AppStorage("debug") private var debug = false
 
     enum Tab: Hashable { case workouts, history, files, settings }
@@ -21,8 +21,8 @@ struct SwimlieApp: App {
         if UserDefaults.standard.string(forKey: "demo") == "swim", let store = Sync.store { Demo.seedFromTestData(store) }
         else if let d = UserDefaults.standard.string(forKey: "demo"), !d.hasSuffix("-empty"), let store = Sync.store { Demo.seed(store) }
         let demo = UserDefaults.standard.string(forKey: "demo")
-        if demo == "history" || demo == "swim" || demo?.hasPrefix("detail") == true || demo?.hasPrefix("trends") == true { _selection = State(initialValue: .history) }
-        if demo == "settings-ai" { _selection = State(initialValue: .settings) }
+        if demo == "history" || demo == "swim" || demo?.hasPrefix("detail") == true || demo?.hasPrefix("trends") == true { _selection = SwiftUI.State(initialValue: .history) }
+        if demo == "settings-ai" { _selection = SwiftUI.State(initialValue: .settings) }
         #endif
     }
 

@@ -19,15 +19,15 @@ struct SettingsView: View {
     @AppStorage("aiModel") private var aiModel = ""
     @AppStorage("aiReviewPrompt") private var reviewPrompt = ""
     @AppStorage("swimLevel") private var swimLevel = "intermediate"
-    @State private var apiKey = ""
-    @State private var showOtherModel = false
-    @State private var loadingModels = false
-    @State private var modelsError: String?
+    @SwiftUI.State private var apiKey = ""
+    @SwiftUI.State private var showOtherModel = false
+    @SwiftUI.State private var loadingModels = false
+    @SwiftUI.State private var modelsError: String?
     /// Models fetched per provider, so switching back is instant.
-    @State private var modelCache: [String: [String]] = [:]
+    @SwiftUI.State private var modelCache: [String: [String]] = [:]
     /// Set when the provider changed and the model list has not been applied yet.
-    @State private var providerChanged = false
-    @State private var keyTask: Task<Void, Never>?
+    @SwiftUI.State private var providerChanged = false
+    @SwiftUI.State private var keyTask: Task<Void, Never>?
 
     private let otherTag = "__other__"
 

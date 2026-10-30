@@ -2,11 +2,11 @@ import SwimlieCore
 import SwiftUI
 
 struct HistoryView: View {
-    @State private var sessions: [StoredSession] = []
-    @State private var css: Double?
-    @State private var path: [String] = []
-    @State private var showTrends = false
-    @State private var error: String?
+    @SwiftUI.State private var sessions: [StoredSession] = []
+    @SwiftUI.State private var css: Double?
+    @SwiftUI.State private var path: [String] = []
+    @SwiftUI.State private var showTrends = false
+    @SwiftUI.State private var error: String?
 
     var body: some View {
         NavigationStack(path: $path) {
