@@ -86,7 +86,7 @@ engine.session() → Session { workout, started_at_ms, laps, lap_positions, lap_
 - **Unplanned stop:** `Resting` once the next lap is 20 s overdue (last lap end or rest end + typical length + 9 s lap delay + 20 s). Rest from the gap is all the engine has live (segments are too late).
 - **Manual override:** `manual_next` closes the rep on screen ("done" while swimming, "skip" while resting). Laps swum before the press stay in that rep. Water lock disables the touchscreen, so skip/next goes on the Digital Crown (turn it past the gauge). No other manual input is planned while swimming: rests and pauses are detected automatically. The one exception is a deliberate pause (e.g. a toilet break, so motion continues): crown + side button, which HealthKit delivers as a `pauseOrResumeRequest` event.
 
-**What HealthKit gives (measured in the pool, 25 m, Apple Watch Series 8):** recordings of two swims are kept as replay fixtures in [`core/tests/data/`](core/tests/data/) and drive `core/tests/engine_replay.rs`.
+**What HealthKit gives (measured in the pool, 25 m, Apple Watch Series 8):** recordings of three swims are kept as replay fixtures in [`core/tests/data/`](core/tests/data/) and drive `core/tests/engine_replay.rs`.
 - **Lap delay:** laps arrive 5 s (minimum) to 9 s (maximum) after the wall. Good enough for a live display, never instant.
 - **Segment delay:** 37 s to 394 s. Useless live, so the engine detects rests from gaps between laps itself.
 - **Regular strokes are reliable:** every length of a plain freestyle main set was detected, and freestyle, breaststroke and backstroke were labelled correctly.
@@ -94,7 +94,7 @@ engine.session() → Session { workout, started_at_ms, laps, lap_positions, lap_
 - **Slow strokes:** a kick set arrives as laps of 42 to 127 s, so "slow" cannot simply mean "two lengths" (see the merged-lap rule above).
 - **Stray laps:** a 3.5 s lap that arrives minutes late is a HealthKit artefact, dropped by the 40 s per 100 m floor.
 - **Long gaps:** HealthKit can miss whole easy pieces, and the engine cannot tell that from a long rest.
-- **Replay accuracy:** fixture A: 67 of 70 labelled laps get the right rep live, 66 of 70 after the whole session. Fixture B: 38 of 38 live and final.
+- **Replay accuracy:** fixture A: 67 of 70 labelled laps get the right rep live, 66 of 70 after the whole session. Fixture B: 38 of 38 live and final. Fixture C (two 4×25 sets of one length per rep): 44 of 44 live and final; the one-length reps land in the right rep, but the screen lags them by the lap delay.
 
 ## 4. Repo layout
 

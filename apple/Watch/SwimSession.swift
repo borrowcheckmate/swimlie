@@ -210,6 +210,7 @@ final class SwimSession: NSObject, SwimSessionModel, HKWorkoutSessionDelegate, H
 
     nonisolated func workoutBuilder(_ b: HKLiveWorkoutBuilder, didCollectDataOf types: Set<HKSampleType>) {
         if types.contains(HKQuantityType(.swimmingStrokeCount)) || types.contains(HKQuantityType(.distanceSwimming)) {
+            log.activity(b, types)
             Task { @MainActor in self.driver.onActivity() } // laps can lag; strokes show the swimmer is still going
         }
         guard types.contains(HKQuantityType(.heartRate)),

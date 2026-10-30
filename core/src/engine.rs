@@ -144,6 +144,8 @@ pub struct Engine {
     hr: Vec<HrSample>,
     /// Latest sign of swimming other than a lap (stroke or distance samples); laps can arrive late.
     active_s: Option<f64>,
+    /// Swimming again after an unplanned stop: (time, rep whose clock counts from then until its first lap arrives).
+    resumed: Option<(f64, usize)>,
     /// Pause windows (start, end); `end` is `None` while paused.
     pauses: Vec<(f64, Option<f64>)>,
 }
@@ -204,6 +206,7 @@ impl Engine {
             records,
             hr: vec![],
             active_s: None,
+            resumed: None,
             pauses: vec![],
         })
     }
@@ -219,9 +222,16 @@ impl Engine {
 
     /// Stroke or distance data arrived at `t_s`: the swimmer is moving even if no lap has been reported.
     pub fn on_activity(&mut self, t_s: f64) {
-        if t_s.is_finite() {
-            self.active_s = Some(self.active_s.map_or(t_s, |a| a.max(t_s)));
+        if !t_s.is_finite() {
+            return;
         }
+        // Moving again after an unplanned stop: the rep started now, not when the rep before it ended.
+        let s = self.tick(t_s);
+        let paused = self.pauses.last().is_some_and(|p| p.1.is_none());
+        if s.phase == Phase::Resting && s.rest_remaining_s.is_none() && !paused {
+            self.resumed = Some((t_s, self.index_of(s.pos)));
+        }
+        self.active_s = Some(self.active_s.map_or(t_s, |a| a.max(t_s)));
     }
 
     /// The `HealthKit` session was paused or resumed at `now_s`. Paused time never counts as an unplanned stop.
