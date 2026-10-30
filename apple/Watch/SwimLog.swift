@@ -42,6 +42,15 @@ final class SwimLog: @unchecked Sendable {
         }
     }
 
+    /// Logs stroke and distance totals as they arrive (Recorder's `stats` lines), to compare their delay with the laps'.
+    func activity(_ b: HKLiveWorkoutBuilder, _ types: Set<HKSampleType>) {
+        for (t, unit, key) in [(HKQuantityType(.swimmingStrokeCount), HKUnit.count(), "sum_count"), (HKQuantityType(.distanceSwimming), .meter(), "sum_m")] {
+            guard types.contains(t), let s = b.statistics(for: t) else { continue }
+            write("stats", ["identifier": t.identifier, "start": s.startDate.timeIntervalSince1970, "end": s.endDate.timeIntervalSince1970,
+                            key: s.sumQuantity()?.doubleValue(for: unit) ?? 0])
+        }
+    }
+
     /// Closes the file and sends it to the phone.
     func close() {
         let u: URL? = io.sync { try? handle?.close(); handle = nil; return url }

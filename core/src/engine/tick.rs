@@ -53,10 +53,16 @@ impl Engine {
         } else {
             Phase::Swimming
         };
-        // Rep start: its first lap, else when the rest ended (or the previous rep, with no rest).
+        // Rep start: its first lap, else when swimming resumed after a stop, when the rest ended, or the previous rep ended.
         let start = match groups.last() {
             Some(g) if g.rep == rep => g.start_s,
-            _ => rest_end.or_else(|| closed.map(|c| c.1)).unwrap_or(0.0),
+            _ => self
+                .resumed
+                .filter(|r| r.1 == rep)
+                .map(|r| r.0)
+                .or(rest_end)
+                .or_else(|| closed.map(|c| c.1))
+                .unwrap_or(0.0),
         };
         // A manual restart of this rep's clock counts from its time, laps already swum stay counted.
         let start = self
