@@ -15,6 +15,7 @@ Local-first swim workouts for iPhone and Apple Watch. Rust owns all data and log
 
 ## Rules
 
+- Work is issue driven: link the issue in the pull request (`Closes #n`). New issues follow `.github/ISSUE_TEMPLATE/` (what and why, how to approach it, done when) and stay short.
 - Keep the core pure: no platform code, no I/O besides the SQLite path the caller passes.
 - Write the smallest change that solves the task. Code should explain itself; comment the why, not the what.
 - Fix clippy findings instead of silencing them. If an exception is justified, use `#[expect(..., reason = "...")]`.

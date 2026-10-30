@@ -8,10 +8,11 @@
 
 ## Workflow
 
-1. Branch from `main` and open a pull request. Nothing is pushed to `main` directly.
-2. `cargo test` and `cargo xtask lint` pass locally; CI runs the same.
-3. After changing the model: `UPDATE_SCHEMA=1 cargo test` regenerates the schema in `schema/`.
-4. After changing Swift: `cargo xtask test`, and read the screenshots it saves in `build/`.
+1. Work starts from an issue. Pick an open one (`good first issue` is a good start) or open one with the templates: what and why, how to approach it, done when. Keep it short, but name the files and commands so someone new can pick it up.
+2. Branch from `main` and open a pull request that says `Closes #<issue>`. Nothing is pushed to `main` directly.
+3. `cargo test` and `cargo xtask lint` pass locally; CI runs the same.
+4. After changing the model: `UPDATE_SCHEMA=1 cargo test` regenerates the schema in `schema/`.
+5. After changing Swift: `cargo xtask test`, and read the screenshots it saves in `build/`.
 
 ## Code
 
@@ -27,4 +28,5 @@
 - Commits follow [Conventional Commits](https://www.conventionalcommits.org): `feat:`, `fix:`, `docs:`, `chore:`, `refactor:`, `test:`, `ci:`, `build:`. The commit-msg hook and CI enforce it.
 - No trailers or attribution lines in commit messages or pull request descriptions.
 - Releases are automatic: [release-plz](https://release-plz.dev) opens a release pull request from the commit messages (version bump and `CHANGELOG.md`), and merging it tags the release and creates the GitHub release. Do not bump versions or edit the changelog by hand.
+- Dependabot opens weekly grouped updates (`build(deps)` for crates, `ci(deps)` for actions). The `security` workflow runs CodeQL and `cargo deny check advisories`; an advisory with no fix goes in `deny.toml` with a reason.
 - Set the `RELEASE_PLZ_TOKEN` repository secret to a token that can open pull requests, so CI runs on the release pull request; without it the workflow falls back to `GITHUB_TOKEN`.

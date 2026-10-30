@@ -1,0 +1,21 @@
+name: Bug
+description: Something does not work as described.
+labels: [bug]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What happens
+      description: What you did, what you expected and what happened instead. Screenshots help.
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Version and device
+      placeholder: 0.1.0, iPhone on iOS 26, Apple Watch Series 8 on watchOS 26
+  - type: textarea
+    id: approach
+    attributes:
+      label: Where to look
+      description: Optional. A hunch about the cause, the module involved, or a recorded swim that reproduces it (`core/tests/data/`). No personal data or real locations.
