@@ -7,6 +7,7 @@ import SwimlieCore
     private(set) var state: State?
     private(set) var saved: Session?
     private(set) var ended = false
+    let saving = false // the fake saves synchronously in end(), so there is no saving state to show
     private(set) var error: String?
     private(set) var heartRate: Double? = 130
     private(set) var paused = false

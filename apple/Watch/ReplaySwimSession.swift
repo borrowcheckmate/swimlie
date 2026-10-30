@@ -11,6 +11,7 @@ import SwimlieCore
     let recorded: Workout
     private(set) var saved: Session?
     private(set) var ended = false
+    let saving = false // the replay saves synchronously in end(), so there is no saving state to show
     private(set) var error: String?
     private(set) var heartRate: Double?
     private(set) var paused = false

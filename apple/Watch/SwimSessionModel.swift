@@ -12,6 +12,8 @@ import SwimlieCore
     var saved: Session? { get }
     /// `end` has run: show the summary (`saved` stays nil when the swim never started).
     var ended: Bool { get }
+    /// `end` has started and the swim is being saved: the live screen shows it and ignores the crown.
+    var saving: Bool { get }
     /// Last start/save failure, for display.
     var error: String? { get }
     /// Latest heart rate in bpm; nil until the first sample.
