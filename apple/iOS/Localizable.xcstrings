@@ -11,6 +11,16 @@
         }
       }
     },
+    "Fixing the workout…": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Training verbeteren…"
+          }
+        }
+      }
+    },
     "Week": {
       "localizations": {
         "nl": {

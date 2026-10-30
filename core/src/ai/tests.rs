@@ -220,3 +220,29 @@ fn prompt_says_every_set_needs_a_rest() {
     assert!(prompt.contains("Every set needs a `rest`"));
     assert!(prompt.contains("warm-up, cool-down, kick and drill sets get `fixed` 15–20 s"));
 }
+
+#[test]
+fn fix_body_sends_the_reply_and_the_first_error_line_back() {
+    let body = fix_body(
+        "m",
+        "Write a workout.",
+        "1500 m, fins",
+        "{\"name\": 1}",
+        "invalid workout: name must be a string\nat line 1",
+    );
+    let roles: Vec<_> = body["messages"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|m| m["role"].as_str().unwrap())
+        .collect();
+    assert_eq!(roles, ["system", "user", "assistant", "user"]);
+    assert_eq!(body["messages"][0]["content"], "Write a workout.");
+    assert_eq!(body["messages"][1]["content"], "1500 m, fins");
+    assert_eq!(body["messages"][2]["content"], "{\"name\": 1}");
+    assert_eq!(
+        body["messages"][3]["content"],
+        "That reply was rejected: invalid workout: name must be a string. Reply with the corrected JSON only."
+    );
+    assert_eq!(body["model"], "m");
+}
