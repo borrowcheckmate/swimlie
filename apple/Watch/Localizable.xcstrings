@@ -381,6 +381,16 @@
         }
       }
     },
+    "Saving…": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Opslaan…"
+          }
+        }
+      }
+    },
     "Send a workout from the Swimlie app on your iPhone.": {
       "localizations": {
         "nl": {

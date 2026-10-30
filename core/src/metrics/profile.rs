@@ -224,6 +224,7 @@ pub fn creator_brief(inputs: CreatorInputs, profile: SwimmerProfile) -> String {
         request.push(format!("- {time}: {t} min"));
     }
     request.push(format!("- Equipment: {gear}"));
+    request.push("- Only use this equipment; none means no equipment at all.".to_string());
     let blocks = if inputs.starting_blocks {
         "yes, dives allowed"
     } else {

@@ -16,6 +16,7 @@ use swimlie_core::model::{Lap, Position, Session, Stroke, Workout, parse_workout
 
 const SWIM_A: &str = concat!(env!("CARGO_MANIFEST_DIR"), "/tests/data/recorded-swim-a");
 const SWIM_B: &str = concat!(env!("CARGO_MANIFEST_DIR"), "/tests/data/recorded-swim-b");
+const SWIM_C: &str = concat!(env!("CARGO_MANIFEST_DIR"), "/tests/data/recorded-swim-c");
 
 fn stroke(s: &str) -> Stroke {
     serde_json::from_value(Value::String(s.into())).unwrap()
@@ -165,6 +166,15 @@ fn swim_2026_10_14_replay() {
     // Lap 110 (3.5 s, delivered 207 s late) is a HealthKit artefact: fed, but not in the session.
     assert_eq!(session.laps.len(), 38);
     assert!(session.laps.iter().all(|l| l.end_s - l.start_s > 10.0));
+}
+
+#[test]
+fn swim_c_replay() {
+    // One-length reps (two 4x25 sets) land in the right rep; their lag is in when, not where (issue #13).
+    let (_, _, live_ok, final_ok, labelled) = replay(SWIM_C);
+    assert_eq!(labelled, 44, "the fins block is unlabelled");
+    assert!(live_ok >= 44, "live accuracy regressed");
+    assert!(final_ok >= 44, "final accuracy regressed");
 }
 
 #[test]

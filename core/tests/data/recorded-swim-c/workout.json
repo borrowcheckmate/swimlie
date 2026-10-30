@@ -1,0 +1,115 @@
+{
+  "version": 1,
+  "name": "Recorded pool swim C",
+  "pool_length_m": 25,
+  "blocks": [
+    {
+      "sets": [
+        {
+          "distance_m": 300,
+          "intensity": "easy",
+          "reps": 1,
+          "stroke": "any"
+        },
+        {
+          "intensity": "easy",
+          "drill": "fingertip-drag",
+          "rest": {
+            "type": "fixed",
+            "seconds": 15
+          },
+          "equipment": [
+            "fins"
+          ],
+          "distance_m": 25,
+          "reps": 4,
+          "stroke": "freestyle"
+        }
+      ],
+      "name": "Warm-up",
+      "repeat": 1
+    },
+    {
+      "sets": [
+        {
+          "intensity": "moderate",
+          "drill": "catch-up",
+          "rest": {
+            "type": "fixed",
+            "seconds": 20
+          },
+          "equipment": [
+            "pull_buoy",
+            "paddles"
+          ],
+          "distance_m": 50,
+          "reps": 4,
+          "stroke": "freestyle"
+        },
+        {
+          "equipment": [
+            "pull_buoy"
+          ],
+          "distance_m": 200,
+          "intensity": "easy",
+          "reps": 1,
+          "stroke": "freestyle"
+        }
+      ],
+      "name": "Pull",
+      "repeat": 1
+    },
+    {
+      "sets": [
+        {
+          "intensity": "moderate",
+          "drill": "six-kick-switch",
+          "rest": {
+            "type": "fixed",
+            "seconds": 20
+          },
+          "equipment": [
+            "fins"
+          ],
+          "distance_m": 50,
+          "reps": 4,
+          "stroke": "freestyle"
+        },
+        {
+          "equipment": [
+            "fins"
+          ],
+          "distance_m": 200,
+          "intensity": "easy",
+          "reps": 1,
+          "stroke": "freestyle"
+        }
+      ],
+      "name": "Fins",
+      "repeat": 1
+    },
+    {
+      "sets": [
+        {
+          "intensity": "easy",
+          "drill": "zipper",
+          "rest": {
+            "type": "fixed",
+            "seconds": 15
+          },
+          "distance_m": 25,
+          "reps": 4,
+          "stroke": "freestyle"
+        },
+        {
+          "distance_m": 200,
+          "intensity": "easy",
+          "reps": 1,
+          "stroke": "any"
+        }
+      ],
+      "name": "Cool-down",
+      "repeat": 1
+    }
+  ]
+}

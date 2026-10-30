@@ -70,6 +70,26 @@ fn pause_and_strokes_do_not_look_like_a_stop() {
 }
 
 #[test]
+fn strokes_after_a_stop_start_the_rep_clock() {
+    // A set without rest, then one-length reps: the stop at the wall must not count as swimming.
+    let mut e = engine(
+        r#"{"reps": 1, "distance_m": 100}, {"reps": 4, "distance_m": 25, "rest": {"type": "fixed", "seconds": 15}}"#,
+    );
+    let end = swim(&mut e, 0.0, 4, 20.0);
+    e.on_activity(end + 3.0); // still in the last length's strokes: no stop yet
+    assert_eq!(e.tick(end + 100.0).phase, Phase::Resting);
+    e.on_activity(end + 120.0);
+    let s = e.tick(end + 125.0);
+    assert_eq!((s.pos.set, s.pos.rep), (1, 0));
+    assert_eq!((s.phase, s.rep_elapsed_s), (Phase::Swimming, Some(5.0)));
+    // Once the rep's lap arrives, the lap's own start counts.
+    swim(&mut e, end + 118.0, 1, 20.0);
+    e.on_activity(end + 160.0);
+    let s = e.tick(end + 170.0);
+    assert_eq!((s.pos.rep, s.rep_elapsed_s), (1, Some(17.0))); // rest ended at end + 153
+}
+
+#[test]
 fn lap_swallowing_a_rest_is_one_length() {
     let mut e = engine(r#"{"reps": 2, "distance_m": 100}"#);
     let end = swim(&mut e, 0.0, 4, 25.0);

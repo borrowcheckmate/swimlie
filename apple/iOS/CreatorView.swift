@@ -305,6 +305,7 @@ struct CreatorView: View {
             do {
                 let reply = try await AIAssistant.generate(system: parts.system, user: parts.user)
                 let imported = fillMissingRest(parsed: try parseImport(json: AIAssistant.jsonObject(in: reply)))
+                try checkEquipment(import: imported, allowed: inputs.equipment)
                 aiBusy = false
                 library.previewNote = nil
                 library.preview = imported

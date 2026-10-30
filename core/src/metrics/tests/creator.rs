@@ -95,6 +95,7 @@ fn creator_brief_with_history() {
         "- Type: threshold",
         "- Target: 2000 m",
         "- Equipment: paddles, pull buoy",
+        "- Only use this equipment; none means no equipment at all.",
         "- Starting blocks: yes, dives allowed",
         "- Notes: Hold 1:40 pace",
         "- CSS pace: 1:35 /100 m",
