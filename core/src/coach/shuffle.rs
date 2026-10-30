@@ -1,7 +1,8 @@
 use super::{
-    Block, Equipment, ExerciseKind, FORMAT_VERSION, Intensity, NO_CSS_NOTE, SPRINT_REPS, Slot,
-    Stroke, SwimLevel, SwimType, Template, Workout, WorkoutSet, add_rep, cut, exercise_set, fixed,
-    main_slots, new_set, pace, pick, round_to_pool, spread_gear, swim_rest, timed, tr,
+    Block, DEFAULT_REST_S, Equipment, ExerciseKind, FORMAT_VERSION, Intensity, NO_CSS_NOTE,
+    SPRINT_REPS, Slot, Stroke, SwimLevel, SwimType, Template, Workout, WorkoutSet, add_rep, cut,
+    exercise_set, fixed, main_slots, new_set, pace, pick, round_to_pool, spread_gear, swim_rest,
+    timed, tr,
 };
 
 /// Reshapes the main sets without changing their distance: easy and moderate freestyle sets split (1 x 400 -> 2 x 200)
@@ -450,7 +451,7 @@ pub(super) fn build_shuffled(
                 };
                 set.rest = Some(swim_rest(&set, goal, rest_x));
             } else {
-                set.rest = fixed(20);
+                set.rest = fixed(DEFAULT_REST_S);
             }
             set
         })

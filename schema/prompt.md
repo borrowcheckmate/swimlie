@@ -9,7 +9,7 @@ Create a swim workout as JSON (or a multi-week training plan, if my request asks
 Rules:
 - `version` is 1.
 - Every `distance_m` must be a multiple of `pool_length_m`.
-- `rest.type` is `interval` (start the next rep every N seconds) or `fixed` (rest N seconds after the rep).
+- Every set needs a `rest`, warm-up, cool-down, kick and drill sets too. `rest.type` is `interval` (start the next rep every N seconds) or `fixed` (rest N seconds after the rep). Pick it like the built-in coach: a set with `goal_s` and 2 or more reps gets `interval` = goal_s + rest; a single rep gets `fixed` = rest; rest = 10 s + 5 s per 100 m (hard: 15 s + 10 s per 100 m), rounded up to a multiple of 5 s; a sprint gets `fixed` = goal_s clamped to 20–60 s; warm-up, cool-down, kick and drill sets get `fixed` 15–20 s.
 - `goal_s` (optional) is the target time per rep in seconds.
 - `stroke`: any, freestyle, backstroke, breaststroke, butterfly, mixed, kickboard.
 - `intensity`: easy, moderate, threshold, hard, sprint.

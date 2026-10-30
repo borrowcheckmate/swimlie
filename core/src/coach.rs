@@ -21,6 +21,9 @@ use slots::{
 };
 use templates::{Template, main_slots};
 
+/// Fixed rest of the warm-up, cool-down, kick and drill sets. The AI fill-in gives sets it left without a rest the same.
+pub const DEFAULT_REST_S: u32 = 20;
+
 /// Distance for a time target. The estimate steps when a rep count changes, so a proportional
 /// rescale can oscillate across the target; bisect on the distance and keep the closest estimate.
 /// Below 400 m is allowed here: sprint rests make a 15 min speed swim shorter than 400 m at CSS 150.
