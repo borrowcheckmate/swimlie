@@ -182,7 +182,7 @@ pub(crate) fn test_summary(log: &str) -> Option<String> {
         .map(str::to_string)
 }
 
-/// Copies the UI test screenshots (`XCTAttachments`) out of the result bundle to build/ui-<name>.png.
+/// Copies the UI test screenshots (`XCTAttachments`) out of the result bundle to `build/ui-<name>.png`.
 pub(crate) fn export_screenshots() {
     let out = "build/ui-attachments";
     let _ = fs::remove_dir_all(out);

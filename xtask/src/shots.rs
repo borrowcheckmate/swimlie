@@ -12,7 +12,7 @@ use crate::{IOS_SCHEME, PROJECT, env_cmd, project, run as exec, run_logged, test
 const IPHONE_NAME: &str = "iPhone 17";
 const DERIVED: &str = "build/derived-iossim";
 const BUILD_LOG: &str = "build/shots-build.log";
-/// (output name, `-demo` argument). Each screen is written to build/phone-<name>.png.
+/// (output name, `-demo` argument). Each screen is written to `build/phone-<name>.png`.
 const SHOTS: [(&str, &str); 17] = [
     ("history", "history"),
     ("detail", "detail"),
@@ -33,7 +33,7 @@ const SHOTS: [(&str, &str); 17] = [
     ("builder-5", "creator-5"),
 ];
 /// (output name, `-demo` argument, reply kind). The AI replies are recorded once from a real call (`API_KEY` and
-/// `AI_PROVIDER` in `.env`) into docs/shots/ai-<kind>.txt and replayed after that, so the shots cost no tokens.
+/// `AI_PROVIDER` in `.env`) into `docs/shots/ai-<kind>.txt` and replayed after that, so the shots cost no tokens.
 /// Delete a text file (or set `REFRESH_AI=1`) to record it again.
 const AI_SHOTS: [(&str, &str, &str); 2] = [
     ("ai-generate", "ai-generate", "generate"),

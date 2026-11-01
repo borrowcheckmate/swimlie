@@ -13,8 +13,9 @@ body:
     id: approach
     attributes:
       label: How to approach it
-      description: Where to start, so someone new can pick it up. Name the files, functions and commands involved; a rough plan is enough.
+      description: Start with the relevant ARCHITECTURE.md section, then the files and functions to open. Include constraints and verification commands so a new contributor can start without reading the whole codebase.
       placeholder: |
+        - ARCHITECTURE.md → <section>
         - Start in `core/src/...`: ...
         - Expose it via UniFFI and use it in `apple/iOS/...`
         - Test with `cargo test` / `cargo xtask test unit`
@@ -24,7 +25,10 @@ body:
     id: done
     attributes:
       label: Done when
-      description: A short checklist that makes the pull request reviewable.
+      description: Verifiable acceptance criteria; each behaviour maps to an automated test.
       placeholder: |
         - [ ] ...
         - [ ] Tests cover ...
+        - [ ] `cargo xtask ci` passes (plus Apple tests if relevant)
+    validations:
+      required: true
