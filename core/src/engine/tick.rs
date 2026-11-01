@@ -85,7 +85,7 @@ impl Engine {
     }
 
     /// The latest rep known to be finished, and when it finished.
-    fn closed_rep(&self, groups: &[Group]) -> Option<(usize, f64)> {
+    pub(super) fn closed_rep(&self, groups: &[Group]) -> Option<(usize, f64)> {
         if let Some(&(t, rep)) = self.marks.last()
             && self.laps.last().is_none_or(|l| mid(l) <= t)
         {
@@ -97,8 +97,8 @@ impl Engine {
             .map(|g| (g.rep, g.end_s))
     }
 
-    /// When the rest after rep `c` (finished at `end`) is over, with manual skips applied.
-    fn rest_end_after(&self, groups: &[Group], c: usize, end: f64) -> Option<f64> {
+    /// When the rest after rep `c` (finished at `end`) is over, with skips and fresh activity applied.
+    pub(super) fn rest_end_after(&self, groups: &[Group], c: usize, end: f64) -> Option<f64> {
         let start = groups
             .last()
             .filter(|g| g.rep == c)
@@ -116,7 +116,13 @@ impl Engine {
             self.rest_skips
                 .iter()
                 .filter(|x| x.1 == c)
-                .fold(base + f64::from(rest.seconds), |e, x| e.min(x.0)),
+                .map(|x| x.0)
+                .chain(
+                    self.resumed
+                        .filter(|(t, rep)| *rep == c + 1 && *t >= base)
+                        .map(|(t, _)| t),
+                )
+                .fold(base + f64::from(rest.seconds), f64::min),
         )
     }
 
