@@ -128,6 +128,7 @@ final class SwimSession: NSObject, SwimSessionModel, HKWorkoutSessionDelegate, H
         timer?.invalidate()
         timer = nil
         driver.stopCountdown()
+        Beeper.stop()
         let endDate = Date()
         hkSession.end()
         Task {
@@ -224,7 +225,13 @@ final class SwimSession: NSObject, SwimSessionModel, HKWorkoutSessionDelegate, H
     nonisolated func workoutBuilder(_ b: HKLiveWorkoutBuilder, didCollectDataOf types: Set<HKSampleType>) {
         if types.contains(HKQuantityType(.swimmingStrokeCount)) || types.contains(HKQuantityType(.distanceSwimming)) {
             log.activity(b, types)
-            Task { @MainActor in self.driver.onActivity() } // laps can lag; strokes show the swimmer is still going
+            let activityEnd = [HKQuantityType(.swimmingStrokeCount), HKQuantityType(.distanceSwimming)]
+                .filter { types.contains($0) }
+                .compactMap { b.statistics(for: $0)?.endDate }
+                .max()
+            if let activityEnd {
+                Task { @MainActor in self.driver.onActivity(at: activityEnd) } // laps can lag; use when HealthKit observed motion
+            }
         }
         guard types.contains(HKQuantityType(.heartRate)),
               let bpm = b.statistics(for: HKQuantityType(.heartRate))?.mostRecentQuantity()?.doubleValue(for: HKUnit.count().unitDivided(by: .minute())) else { return }
