@@ -81,8 +81,9 @@ Bring your own key: Mistral, OpenAI, Anthropic, Gemini, OpenRouter or any OpenAI
 ## Develop
 
 ```sh
-cargo test               # core tests
-cargo xtask lint         # formatting, strict clippy, file length: what CI runs
+cargo install --locked cargo-deny  # once
+cargo xtask hooks                 # once per clone
+cargo xtask ci                    # portable completion checks (same as CI)
 ```
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for the workflow and [ARCHITECTURE.md](ARCHITECTURE.md) for how the pieces fit.

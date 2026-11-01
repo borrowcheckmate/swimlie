@@ -1,34 +1,50 @@
 # Architecture
 
-Open source, local-first replacement for MySwimPro. iOS app + Apple Watch companion first, a self-hosted Docker server later.
+Read this first, then only the modules your task touches. This document describes the current code; future work belongs in issues.
+
+Local-first swim workouts for iPhone and Apple Watch. Rust owns data and calculations; Swift owns UI and Apple APIs.
+
+## Where to start
+
+| Task | Open first | Automated checks |
+| --- | --- | --- |
+| Workout format, schema, import | `core/src/model.rs`, `core/src/model/tests.rs`, `schema/` | `UPDATE_SCHEMA=1 cargo test -p swimlie-core`, then review schema diff |
+| Live rep/rest timing | §3, `core/src/engine.rs`, `core/src/engine/`, `core/tests/engine_replay.rs` | Core unit and replay tests |
+| Pace, SWOLF, CSS, trends | `core/src/metrics.rs`, `core/src/metrics/` | Metrics tests in that module |
+| Workout generation | §5, `core/src/coach.rs`, `core/src/coach/` | Coach tests in that module |
+| Persistence or phone/watch sync | `core/src/store.rs`, `core/src/store/`, `apple/Shared/` | Store and sync tests; Apple tests for Swift changes |
+| Swift bindings | `core/src/lib.rs`, `apple/SwimlieCore/`, `xtask/src/xcode.rs` | Core tests, then `cargo xtask test all` |
+| iPhone UI or AI providers | `apple/iOS/`, `core/src/ai.rs`, `core/src/review.rs` | Core tests and `cargo xtask test all` for Swift |
+| Watch UI or HealthKit | §3, `apple/Watch/`, `apple/Tests/` | `cargo xtask test all` |
+| Automation and contributor checks | §4, `xtask/src/main.rs`, `xtask/src/workflow.rs`, `xtask/src/policy/`, `.github/` | `cargo xtask ci` |
+
+Every task finishes with `cargo xtask ci`; Apple checks supplement it when relevant. Setup and the command reference live in CONTRIBUTING.md.
 
 ## 1. Architecture
 
 ```
-┌──────────────────────────── swimlie-core (Rust) ────────────────────────────┐
-│ model     Workout, Block, Set, Session, Lap   (serde, versioned JSON)        │
-│ engine    live set state machine: laps/distance/time in → "where am I" out   │
-│ metrics   pace/100, SWOLF, stroke rate, CSS, training load, PRs              │
-│ store     SQLite (rusqlite, bundled), UUID ids + updated_at (sync-ready)     │
-│ coach     rule-based workout generator (templates × goal × CSS pace)         │
-│ io        JSON import/export, validation against schema                      │
-└──────────────┬───────────────────────────────┬───────────────────────────────┘
-               │ UniFFI → XCFramework          │ plain Rust crate (later)
-       ┌───────┴────────┐               ┌──────┴─────────────────┐
-       │ Swift: iOS app │◄─WatchConn.─► │ Swift: watchOS app     │   server: axum + MCP (Docker)
-       │ library, import│  (JSON blobs) │ HealthKit live session │
-       │ history, charts│               │ schedule + rest UI     │
-       └────────────────┘               └────────────────────────┘
+core/ (swimlie-core)
+  model        workouts, blocks, sets, sessions, laps; JSON import and validation
+  engine       live rep/rest state from lap events and clock ticks
+  metrics      pace, SWOLF, CSS, training load and personal records
+  store        local SQLite, versioned rows and JSON sync
+  coach        rule-based workout and plan generation
+  ai / review  AI prompts, validation and session review data
+          │ UniFFI / XCFramework
+          ├── apple/iOS/    library, import, history, charts and AI provider clients
+          └── apple/Watch/  HealthKit, live schedule and rest UI
+                    ↕
+          apple/Shared/    phone/watch JSON sync over WatchConnectivity
 ```
 
 Rules:
 - **Rust owns all data and all calculations.** Swift only does UI, Apple APIs (HealthKit, WatchConnectivity, files) and forwards events to the core.
 - **Local SQLite on each device.** Phone ↔ watch sync is JSON over WatchConnectivity. No cloud.
-- **The core is pure, with no platform code**, so the same crate runs in the Docker server later without changes.
+- **The core has no platform code.** SQLite persistence is isolated in `store`; Apple APIs stay in Swift.
 
 ## 2. Workout format
 
-The contract for AI apps, MCP and the coach. Published as `schema/workout.schema.json` and versioned like a public API.
+The contract for AI-generated workouts and the coach. Published as `schema/workout.schema.json` and versioned like a public API.
 
 ```json
 {
@@ -55,9 +71,9 @@ The contract for AI apps, MCP and the coach. Published as `schema/workout.schema
 **Plans** (`schema/plan.schema.json`, example `schema/plan-example.json`): `{ "version": 1, "name", "weeks": [{ "focus"?, "workouts": [Workout, …] }] }`. Weeks, not dates: no calendar. Stored in the `plans` table (migration v4, synced like workouts). Each plan workout is sent to the watch under the fixed id `<plan id>/<week>/<index>` (`plan_workout_id`, 0-based), so the swum session's `workout_id` marks it done; the iPhone tints the first one not done as next. `parse_import` tells a plan (top-level `weeks`) from a workout.
 
 Ways to get a workout in (all produce this JSON):
-1. **Import:** paste, share sheet or a `.json` file, plus a ready-made prompt for AI apps. Comes first.
+1. **Import:** paste, share sheet or a `.json` file, plus a ready-made prompt for AI apps.
 2. **Coach:** rule-based generator in Rust from goal, available time and CSS pace.
-3. **MCP:** `create_workout`, `list_sessions`, `get_stats`. Runs on the server, because a phone can't host an MCP server for desktop AI clients.
+3. **AI:** iPhone provider clients request JSON workouts; the Rust core validates the result before storage.
 
 ## 3. Watch: measuring and following the schedule
 
@@ -103,11 +119,17 @@ swimlie/
   core/            Rust crate: all logic and tests, exported to Swift with UniFFI
     src/             one module per concern; a module that outgrows a file becomes a folder of submodules
     tests/           engine replays over recorded swims (tests/data)
-  xtask/           repo automation: builds, tests, devices, screenshots, lint (`cargo xtask`)
+  xtask/           repo automation: portable checks, builds, tests, devices and screenshots (`cargo xtask`)
   schema/          workout.schema.json, plan.schema.json and the AI prompt template
   apple/           XcodeGen spec, iOS app, watchOS app, SwimlieCore Swift package (wraps the XCFramework)
   docs/            README images and recorded AI replies
 ```
+
+### Repository workflow
+
+`xtask/src/main.rs` dispatches commands. `workflow.rs` composes `ci`, `pre-commit`, hook installation and message/identity checks; `lint.rs` runs formatting, strict clippy and the existing 600-line rule. `repo.rs` reads tracked paths and Git identities. `policy/` contains the privacy, repository and message rules, with their unit tests beside them.
+
+`.githooks/pre-commit` and `.githooks/commit-msg` call xtask. `.github/workflows/ci.yml` calls the same portable suite and validates PR metadata and commit identities. Apple build, test and simulator tasks remain in `xcode.rs`, `sim.rs` and the other existing xtask modules; portable CI does not need Xcode. The security workflow adds CodeQL and scheduled advisory checks; release and TestFlight workflows remain separate.
 
 Files stay under 600 lines (`cargo xtask lint` enforces it): a longer file is split into submodules, with its tests in a sibling `tests` module.
 
