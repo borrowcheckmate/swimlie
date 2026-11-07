@@ -48,6 +48,7 @@ struct Pending: Codable {
     @ObservationIgnored private(set) var engine: LiveEngine?
     @ObservationIgnored private var seen = Set<String>()
     @ObservationIgnored private var seenPauses = Set<String>() // separate: seen.count is the lap count marks are replayed by
+    @ObservationIgnored private var pauseStarted: Date?
     @ObservationIgnored private var countdown: Task<Void, Never>? // rest countdown: tone at 3, 2, 1 s left; higher tone at 0
     @ObservationIgnored private var countdownPos: Position? // the rest that countdown belongs to
     @ObservationIgnored private let now: () -> Date
@@ -82,6 +83,7 @@ struct Pending: Codable {
         attach(engine, start: start)
         seenPauses.formUnion(pauses.map(\.key)) // old presses were already acted on
         feed(laps: laps, replay: marks, pauseMarks: pauseMarks)
+        pauseStarted = pauseMarks.last.flatMap { $0.paused ? start.addingTimeInterval($0.t) : nil }
         apply(engine.tick(nowS: nowS))
     }
 
@@ -92,7 +94,7 @@ struct Pending: Codable {
 
     private func attach(_ engine: LiveEngine, start: Date) {
         self.start = start
-        seen = []; seenPauses = []; stopCountdown()
+        seen = []; seenPauses = []; pauseStarted = nil; stopCountdown()
         self.engine = engine
     }
 
@@ -166,7 +168,9 @@ struct Pending: Codable {
 
     func setPaused(_ paused: Bool, at date: Date? = nil) {
         guard let engine else { return }
-        let t = (date ?? now()).timeIntervalSince(start)
+        let at = date ?? now()
+        let t = at.timeIntervalSince(start)
+        pauseStarted = paused ? at : nil
         engine.setPaused(paused: paused, nowS: t)
         if var p = Pending.load(defaults) {
             p.pauses = (p.pauses ?? []) + [.init(t: t, laps: seen.count, paused: paused)]
@@ -174,6 +178,12 @@ struct Pending: Codable {
         }
         if paused { stopCountdown() }
         apply(engine.tick(nowS: nowS))
+    }
+
+    /// A delayed lap from before the pause must not resume a deliberately paused workout.
+    func newLapAfterPause(_ events: [LapEvent]) -> Date? {
+        guard let paused = pauseStarted else { return nil }
+        return events.filter { !seen.contains($0.key) && $0.start > paused }.map(\.start).min()
     }
     func onActivity(at date: Date) {
         guard let engine else { return }

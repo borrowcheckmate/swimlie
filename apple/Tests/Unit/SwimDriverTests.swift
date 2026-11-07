@@ -3,6 +3,20 @@ import XCTest
 
 @MainActor
 final class SwimDriverTests: XCTestCase {
+    func testOnlyNewLapsStartingAfterPauseCanResume() throws {
+        let clock = Clock(t0)
+        let d = makeDriver(clock: clock, defaults: freshDefaults())
+        let w = try parseWorkout(json: #"{"version":1,"name":"test","pool_length_m":25,"blocks":[{"name":"set","sets":[{"reps":1,"distance_m":100}]}]}"#)
+        let e = try LiveEngine(workout: w, workoutId: "test", startedAtMs: ms(t0), records: [])
+        d.begin(engine: e, workout: w, id: "test", start: t0)
+        clock.now = t0 + 40; d.setPaused(true)
+        let delayed = LapEvent(key: "old", start: t0 + 20, end: t0 + 39, stroke: .freestyle)
+        XCTAssertNil(d.newLapAfterPause([delayed]))
+        let fresh = LapEvent(key: "new", start: t0 + 80, end: t0 + 100, stroke: .freestyle)
+        XCTAssertEqual(d.newLapAfterPause([delayed, fresh]), t0 + 80)
+        d.setPaused(false, at: t0 + 80)
+        XCTAssertNil(d.newLapAfterPause([fresh]))
+    }
     func testRecoveryRestoresPauseWindows() throws {
         let clock = Clock(t0)
         let defaults = freshDefaults()

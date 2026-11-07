@@ -221,7 +221,15 @@ final class SwimSession: NSObject, SwimSessionModel, HKWorkoutSessionDelegate, H
     nonisolated func workoutBuilderDidCollectEvent(_ b: HKLiveWorkoutBuilder) {
         let events = b.workoutEvents
         log.events(events)
-        Task { @MainActor in self.driver.feed(laps: self.lapEvents(events)); self.pauseRequests(events) }
+        Task { @MainActor in
+            let laps = self.lapEvents(events)
+            if let resumed = self.driver.newLapAfterPause(laps), self.hkSession?.state == .paused {
+                self.driver.setPaused(false, at: resumed)
+                self.hkSession?.resume()
+            }
+            self.driver.feed(laps: laps)
+            self.pauseRequests(events)
+        }
     }
 
     nonisolated func workoutBuilder(_ b: HKLiveWorkoutBuilder, didCollectDataOf types: Set<HKSampleType>) {
