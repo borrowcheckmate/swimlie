@@ -132,10 +132,36 @@ pub fn generate_workout(inputs: CreatorInputs, profile: SwimmerProfile) -> Worko
             Some((r >> 8, &inputs.strokes)),
             &inputs.language,
         );
+        adapt_goals(&mut w, &profile.rep_times);
         scale_rest(&mut w, inputs.rest_percent);
         w
     };
     make(target_distance(&inputs, pace_css, 2000, &make))
+}
+
+/// Calibrate a matching rep from the swimmer's recent median, keeping the planned rest allowance.
+fn adapt_goals(workout: &mut Workout, history: &[metrics::StrokeTime]) {
+    for set in workout.blocks.iter_mut().flat_map(|b| &mut b.sets) {
+        let Some(old) = set.goal_s else { continue };
+        let Some(recent) = history.iter().find(|r| {
+            r.stroke == set.stroke
+                && r.distance_m == set.distance_m
+                && r.count > 0
+                && r.median_s.is_finite()
+                && r.median_s > 0.0
+        }) else {
+            continue;
+        };
+        let goal = (recent.median_s * 0.98).round().max(1.0) as u32;
+        if let Some(rest) = &mut set.rest
+            && rest.kind == RestKind::Interval
+        {
+            rest.seconds = up5(f64::from(
+                goal.saturating_add(rest.seconds.saturating_sub(old)),
+            ));
+        }
+        set.goal_s = Some(goal);
+    }
 }
 
 /// Scales the rest of every timed set by `percent` (-50 to 100), to 5 s. An interval is goal + rest, so only the rest part moves.
@@ -196,7 +222,7 @@ pub fn generate_plan(inputs: CreatorInputs, profile: SwimmerProfile) -> Plan {
     let weeks = inputs.plan_weeks.unwrap_or(4).clamp(1, 16);
     let swims = inputs.swims_per_week.unwrap_or(3).clamp(1, 7);
     let build_at = |t: SwimType, d: u32, variant: u32, seed: u32| {
-        build_shuffled(
+        let mut workout = build_shuffled(
             t,
             pool,
             &inputs.equipment,
@@ -208,7 +234,9 @@ pub fn generate_plan(inputs: CreatorInputs, profile: SwimmerProfile) -> Plan {
             inputs.starting_blocks,
             None,
             &inputs.language,
-        )
+        );
+        adapt_goals(&mut workout, &profile.rep_times);
+        workout
     };
     let per_swim = target_distance(&inputs, pace_css, 1500, &|d| build_at(kind, d, 0, 0));
     let history = profile.weekly_m_28d >= 500.0;

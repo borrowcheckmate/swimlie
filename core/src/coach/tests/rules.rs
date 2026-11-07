@@ -197,6 +197,40 @@ fn goal_and_interval_from_css() {
 }
 
 #[test]
+fn history_calibrates_goal_and_preserves_interval_rest() {
+    let mut w = generate_workout(
+        CreatorInputs {
+            strokes: vec![Stroke::Freestyle],
+            ..input("threshold", 25, vec![], Some(2000), None)
+        },
+        swimmer(Some(85.0)),
+    );
+    let set = w.blocks[1]
+        .sets
+        .iter_mut()
+        .find(|s| s.distance_m == 100)
+        .unwrap();
+    let old_goal = set.goal_s.unwrap();
+    let old_rest = set.rest.as_ref().unwrap().seconds - old_goal;
+    adapt_goals(
+        &mut w,
+        &[metrics::StrokeTime {
+            stroke: Stroke::Freestyle,
+            distance_m: 100,
+            median_s: 100.0,
+            count: 4,
+        }],
+    );
+    let set = w.blocks[1]
+        .sets
+        .iter()
+        .find(|s| s.distance_m == 100)
+        .unwrap();
+    assert_eq!(set.goal_s, Some(98));
+    assert!(set.rest.as_ref().unwrap().seconds >= 98 + old_rest);
+}
+
+#[test]
 fn paces_scale_css_by_intensity_and_stroke() {
     let same = |a: f64, b: f64| (a - b).abs() < 1e-9;
     let intensities = [
