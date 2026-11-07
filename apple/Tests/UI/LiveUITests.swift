@@ -7,9 +7,10 @@ final class LiveUITests: XCTestCase {
         continueAfterFailure = false
     }
 
-    private func launch(speed: String, script: String? = nil) -> XCUIApplication {
+    private func launch(speed: String, script: String? = nil, start: String? = nil, dimmed: Bool = false) -> XCUIApplication {
         let app = XCUIApplication()
         app.launchArguments = ["-replay", "recorded-swim-b", "-speed", speed] + (script.map { ["-script", $0] } ?? [])
+            + (start.map { ["-start", $0] } ?? []) + (dimmed ? ["-dimmed", "YES"] : [])
         app.launch()
         return app
     }
@@ -35,6 +36,14 @@ final class LiveUITests: XCTestCase {
         shot(app, "live-rest")
     }
 
+    /// The Always On environment keeps the rep screen readable while flattening its animated fill.
+    func testDimmedLiveScreen() {
+        let app = launch(speed: "0", start: "30", dimmed: true)
+        XCTAssertTrue(app.staticTexts.matching(identifier: "live.rep").firstMatch.waitForExistence(timeout: 30))
+        XCTAssertTrue(app.staticTexts["25/50 m"].exists)
+        shot(app, "live-dimmed")
+    }
+
     /// The first `next` is the start (GO) of the countdown, the second marks rep 1 done: the counter must read 2/N.
     /// Both run before the first labelled lap, so no natural lap can make the check pass by itself.
     func testScriptedNextAdvancesRep() {
@@ -49,13 +58,10 @@ final class LiveUITests: XCTestCase {
         shot(app, "after-next")
     }
 
-    /// The recording ends by itself (about 5400 simulated s, so ~30 s at speed 200); End then shows the totals.
-    func testSummaryShowsTotalsAfterRecordingEnds() {
+    /// The recording ends by itself (about 5400 simulated s, so ~30 s at speed 200); completion saves without input.
+    func testCompletionAutomaticallyShowsSummary() {
         let app = launch(speed: "200")
-        XCTAssertTrue(app.staticTexts["Workout done"].waitForExistence(timeout: 120))
-        shot(app, "done")
-        app.buttons["End"].firstMatch.tap()
-        XCTAssertTrue(app.staticTexts["summary.distance"].waitForExistence(timeout: 30))
+        XCTAssertTrue(app.staticTexts["summary.distance"].waitForExistence(timeout: 120))
         XCTAssertTrue(app.staticTexts["summary.total_time"].exists)
         shot(app, "summary")
     }

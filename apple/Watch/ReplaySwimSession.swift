@@ -19,7 +19,12 @@ import SwimlieCore
 
     var workout: Workout? { driver.workout }
     var state: State? { driver.state }
-    var stateDate: Date { driver.stateDate }
+    var stateDate: Date {
+        let now = Date()
+        guard speed.isFinite, speed > 0 else { return now }
+        let sampleAge = max(0, clock.now.timeIntervalSince(driver.stateDate))
+        return now.addingTimeInterval(-sampleAge / speed)
+    }
 
     private let store: Store
     private let speed: Double // simulated seconds per real second

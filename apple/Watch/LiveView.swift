@@ -12,12 +12,13 @@ struct LiveView: View {
     private let crownTravel = 2.0 // tune: bigger = more turning needed; 1.0 fired too easily in the pool
     @SwiftUI.State private var armed = true // one action per crown turn
     @SwiftUI.State private var fromTop = false // last crown direction: the new screen comes in from there
+    @SwiftUI.State private var ending = false
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @Environment(\.isLuminanceReduced) private var wristDown
     @Environment(\.dynamicTypeSize) private var textSize
     @SwiftUI.State private var lowPower = ProcessInfo.processInfo.isLowPowerModeEnabled
 
-    /// The color fill costs battery (lit pixels): plain black in Low Power Mode. With the wrist down it stays, the wave frozen.
+    /// The color fill costs battery (lit pixels): plain black in Low Power Mode. With the wrist down it stays as a flat waterline.
     private var fills: Bool { !lowPower }
 
     var body: some View {
@@ -45,17 +46,22 @@ struct LiveView: View {
             }
         }
         .focusable()
-        .digitalCrownRotation($crown, from: -crownTravel, through: crownTravel, sensitivity: .low, isContinuous: false, isHapticFeedbackEnabled: false, onChange: { _ in turned() }, onIdle: { withAnimation(reduceMotion ? nil : .snappy) { crown = 0 }; armed = true })
+        .digitalCrownRotation($crown, from: -crownTravel, through: crownTravel, sensitivity: .low, isContinuous: false, isHapticFeedbackEnabled: false, onChange: { _ in turned() }, onIdle: { withAnimation(reduceMotion || wristDown ? nil : .snappy) { crown = 0 }; armed = true })
         .overlay(alignment: .trailing) { CrownGauge(crown: crown, travel: crownTravel) }
         .onChange(of: session.state) { old, new in
             if let o = old, let n = new { fromTop = before(n.pos, o.pos) } else { fromTop = false } // auto advances go forward
         }
+        .onChange(of: session.state?.phase == .done) { _, done in
+            if done { finish() } // completion saves without requiring a crown turn
+        }
+        .onAppear { if session.state?.phase == .done { finish() } } // also handle a completed state when this view first appears
         .onChange(of: session.saving) { _, saving in
             if saving { WKInterfaceDevice.current().play(.stop) } // the swimmer feels the end press land
         }
         .onReceive(NotificationCenter.default.publisher(for: .NSProcessInfoPowerStateDidChange).receive(on: RunLoop.main)) { _ in
             lowPower = ProcessInfo.processInfo.isLowPowerModeEnabled
         }
+        .transaction { if wristDown { $0.animation = nil; $0.disablesAnimations = true } }
     }
 
     private func turned() {
@@ -65,10 +71,16 @@ struct LiveView: View {
     }
 
     private func up() {
-        if session.state?.phase == .done { return onEnd() }
+        if session.state?.phase == .done { return finish() }
         session.manualNext()
         fromTop = false
         WKInterfaceDevice.current().play(.directionUp)
+    }
+
+    private func finish() {
+        guard !ending, !session.ended, !session.saving else { return }
+        ending = true
+        onEnd()
     }
 
     private func down() {
@@ -83,6 +95,7 @@ struct LiveView: View {
     private func isPaused(_ s: SwimState) -> Bool { s.phase == .resting && s.restRemainingS == nil }
 
     private func screenTransition(_ s: SwimState) -> AnyTransition {
+        if wristDown { return .identity }
         if reduceMotion { return .opacity }
         return isPaused(s) ? .scale(scale: 0.85).combined(with: .opacity) : .push(from: fromTop ? .top : .bottom)
     }
@@ -116,9 +129,9 @@ struct LiveView: View {
         case .swimming where fills:
             if let g = currentSet(s)?.goalS {
                 let t = s.repElapsedS ?? 0
-                Filled(frac: t / Double(g), color: t > Double(g) ? .waterOrange : .waterGreen) { content }
+                Filled(frac: t / Double(g), color: t > Double(g) ? .waterOrange : .waterGreen, dimmed: wristDown) { content }
             } else {
-                Filled(frac: Double(s.doneM) / Double(max(s.targetM, 1)), color: .waterBlue) { content }
+                Filled(frac: Double(s.doneM) / Double(max(s.targetM, 1)), color: .waterBlue, dimmed: wristDown) { content }
             }
         default: content
         }
@@ -160,7 +173,7 @@ struct LiveView: View {
     private func paused(_ s: SwimState) -> some View {
         VStack(spacing: 8) {
             Spacer(minLength: 0)
-            Image(systemName: "pause.fill").font(.system(size: 44)).foregroundStyle(.yellow).symbolEffect(.pulse)
+            Image(systemName: "pause.fill").font(.system(size: 44)).foregroundStyle(.yellow).symbolEffect(.pulse, isActive: !wristDown)
             Text("Paused").font(.system(.title3, design: .rounded, weight: .bold)).foregroundStyle(.yellow)
             if let r = s.lastRep { LastRep(result: r, set: lastSet(s), ageYears: session.ageYears) }
             Text("swim to resume").font(.footnote).foregroundStyle(.secondary)
@@ -182,12 +195,12 @@ struct LiveView: View {
     private func done(_ s: SwimState) -> some View {
         VStack(spacing: 6) {
             Spacer(minLength: 0)
-            Image(systemName: "checkmark.circle.fill").font(.system(size: 40)).foregroundStyle(.green).symbolEffect(.bounce)
+            Image(systemName: "checkmark.circle.fill").font(.system(size: 40)).foregroundStyle(.green).symbolEffect(.bounce, isActive: !wristDown)
             Text("Workout done").font(.system(.headline, design: .rounded, weight: .bold))
             Text(metres(s.swumM)).font(digits(30)).minimumScaleFactor(0.5).lineLimit(1)
                 .foregroundStyle(Metric.distance.color).opacity(wristDown ? 0.6 : 1)
-            Label("Crown to save", systemImage: "chevron.down").font(.footnote).foregroundStyle(.secondary)
-            Button("End", action: onEnd).buttonStyle(.borderedProminent).tint(.red)
+            Label("Crown up to save", systemImage: "chevron.up").font(.footnote).foregroundStyle(.secondary)
+            Button("End", action: finish).buttonStyle(.borderedProminent).tint(.red)
             Spacer(minLength: 0)
         }
     }
@@ -212,7 +225,7 @@ struct LiveView: View {
                 }
             }
             .frame(height: 6)
-            .animation(.snappy, value: frac)
+            .animation(wristDown ? nil : .snappy, value: frac)
             HStack {
                 Text("\(s.doneM)/\(s.targetM) m").foregroundStyle(Metric.distance.color).opacity(wristDown ? 0.6 : 1)
                 Spacer()
@@ -226,7 +239,7 @@ struct LiveView: View {
     private func bottom(_ s: SwimState) -> some View {
         HStack {
             HStack(spacing: 3) {
-                Image(systemName: "heart.fill").symbolEffect(.pulse)
+                Image(systemName: "heart.fill").symbolEffect(.pulse, isActive: !wristDown)
                 Text(session.heartRate.map { "\(Int($0.rounded()))" } ?? "--").fixedSize() // the number first: the time label shrinks instead
                 if let set = currentSet(s) { ZoneBar(zone: zone, target: Array(targetZones(intensity: set.intensity))) }
             }
@@ -290,7 +303,7 @@ private struct LastRep: View {
             if showsStats { statsRow }
         }
         .scaleEffect(shown ? 1 : 0.8).opacity(shown ? 1 : 0)
-        .onAppear { withAnimation(.spring(duration: 0.45, bounce: 0.3)) { shown = true } }
+        .onAppear { withAnimation(wristDown ? nil : .spring(duration: 0.45, bounce: 0.3)) { shown = true } }
     }
 
     private var timeRow: some View {
@@ -305,7 +318,7 @@ private struct LastRep: View {
                 Image(systemName: "trophy.fill").font(.system(size: 11, weight: .bold)).blendMode(.destinationOut) // a cutout: readable over a fill too
                     .padding(.horizontal, 7).padding(.vertical, 3).background(Color.purple, in: Capsule())
                     .compositingGroup()
-                    .symbolEffect(.bounce, options: .nonRepeating)
+                    .symbolEffect(.bounce, options: .nonRepeating, isActive: !wristDown)
                     .accessibilityLabel("Personal record")
             }
         }
@@ -340,20 +353,29 @@ private struct Tight: LabelStyle {
 struct Filled<Content: View>: View {
     let frac: Double
     let color: Color
+    var dimmed = false
     @ViewBuilder let content: Content
     @SwiftUI.State private var shift = 0.0 // one loop of the waves; shared, so the three layers stay in step
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     var body: some View {
         GeometryReader { g in
-            let water = { (c: Color) in Water(level: min(1, max(0, frac)), insets: g.safeAreaInsets, shift: shift, color: c) }
+            let water = { (c: Color) in Water(level: min(1, max(0, frac)), insets: g.safeAreaInsets, shift: shift, color: c, flat: dimmed) }
             ZStack {
                 water(color)
                 content.mask { Rectangle().overlay(water(.black).blendMode(.destinationOut)).compositingGroup() } // above the water only: no white edges
                 content.colorMultiply(.black).mask(water(.black)).accessibilityHidden(true)
             }
         }
-        .onAppear { if !reduceMotion { withAnimation(.linear(duration: 2.5).repeatForever(autoreverses: false)) { shift = 1 } } }
+        .onAppear { animateWater(unlessDimmed: dimmed) }
+        .onChange(of: dimmed) { _, dimmed in
+            if dimmed { shift = 0 } else { animateWater(unlessDimmed: false) }
+        }
+        .transaction { if dimmed { $0.animation = nil; $0.disablesAnimations = true } }
+    }
+
+    private func animateWater(unlessDimmed: Bool) {
+        if !reduceMotion && !unlessDimmed { withAnimation(.linear(duration: 2.5).repeatForever(autoreverses: false)) { shift = 1 } }
     }
 }
 
@@ -363,15 +385,16 @@ private struct Water: View {
     let insets: EdgeInsets
     let shift: Double
     let color: Color
+    let flat: Bool
 
     var body: some View {
         GeometryReader { g in
             let wavelength = (g.size.width + insets.leading + insets.trailing) / 1.5
-            Wave(level: level, insets: insets, wavelength: wavelength).fill(color)
+            Wave(level: level, insets: insets, wavelength: wavelength, flat: flat).fill(color)
                 .offset(x: shift * wavelength)
                 .clipShape(ScreenRect(insets: insets)) // the extra wavelength must not show over a neighbouring page while paging
-                .animation(.linear(duration: 1), value: level) // only the water moves: text in the same frame, no ghost copy
-                .animation(.easeInOut(duration: 0.6), value: color)
+                .animation(flat ? nil : .linear(duration: 1), value: level) // only the water moves: text in the same frame, no ghost copy
+                .animation(flat ? nil : .easeInOut(duration: 0.6), value: color)
         }
     }
 }
@@ -390,12 +413,13 @@ private struct Wave: Shape {
     var level: Double
     let insets: EdgeInsets
     let wavelength: CGFloat
+    let flat: Bool
     var animatableData: Double { get { level } set { level = newValue } }
 
     func path(in r: CGRect) -> Path {
         let full = CGRect(x: r.minX - insets.leading, y: r.minY - insets.top,
                           width: r.width + insets.leading + insets.trailing, height: r.height + insets.top + insets.bottom)
-        let amp = 5 * min(1, min(level, 1 - level) * 8) // flat when empty or full: no gaps at the edges
+        let amp = flat ? 0 : 5 * min(1, min(level, 1 - level) * 8) // flat when dimmed, empty or full
         let y0 = full.maxY - full.height * level
         let x0 = full.minX - wavelength
         var p = Path()
@@ -438,13 +462,13 @@ private struct RestCountdown: View {
                 .padding(6)
                 .rotationEffect(.degrees(-90))
                 .animation(wristDown ? nil : .linear(duration: 1), value: frac) // Always On shows no animation: each whole-second step would jump
-                .animation(.easeInOut(duration: 0.6), value: blue)
+                .animation(wristDown ? nil : .easeInOut(duration: 0.6), value: blue)
             VStack(spacing: 2) {
                 if lastRep == nil { Text("GET READY").font(.system(.caption, design: .rounded, weight: .bold)).foregroundStyle(Color.accent).multilineTextAlignment(.center).minimumScaleFactor(0.6) }
                 Text(mmss(left)).font(.system(size: 50, weight: .bold, design: .rounded).monospacedDigit())
-                    .minimumScaleFactor(0.4).lineLimit(1).contentTransition(.numericText(countsDown: true))
+                    .minimumScaleFactor(0.4).lineLimit(1).contentTransition(wristDown ? .identity : .numericText(countsDown: true))
                     .foregroundStyle(blue ? Color.accent : Metric.time.color).opacity(wristDown ? 0.6 : 1)
-                    .animation(.easeInOut(duration: 0.6), value: blue)
+                    .animation(wristDown ? nil : .easeInOut(duration: 0.6), value: blue)
                     .layoutPriority(1).accessibilityIdentifier("live.rest")
                 if let r = lastRep { LastRep(result: r, set: set, ageYears: ageYears, showsStats: false, compact: true).frame(maxWidth: d * 0.6) } // inside the ring's chord
             }
@@ -459,6 +483,7 @@ private struct CrownGauge: View {
     let crown: Double
     let travel: Double
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(\.isLuminanceReduced) private var wristDown
 
     var body: some View {
         let frac = min(1, abs(crown) / travel)
@@ -478,7 +503,7 @@ private struct CrownGauge: View {
         .padding(.vertical, 8).padding(.horizontal, 5)
         .background(Color.black.opacity(0.5), in: Capsule()) // readable over the water
         .opacity(shown ? 1 : 0)
-        .animation(reduceMotion ? nil : .easeOut(duration: 0.15), value: shown)
+        .animation(reduceMotion || wristDown ? nil : .easeOut(duration: 0.15), value: shown)
         .allowsHitTesting(false)
     }
 }

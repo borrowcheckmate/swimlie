@@ -151,7 +151,11 @@ struct Pending: Codable {
     }
 
     func setPaused(_ paused: Bool) { engine?.setPaused(paused: paused, nowS: nowS) }
-    func onActivity() { engine?.onActivity(tS: nowS) } // laps can lag; strokes show the swimmer is still going
+    func onActivity(at date: Date) {
+        guard let engine else { return }
+        engine.onActivity(tS: date.timeIntervalSince(start)) // use sample time; callbacks can lag
+        apply(engine.tick(nowS: nowS))
+    }
     func onHeartRate(_ bpm: Double) { engine?.onHeartRate(tS: nowS, bpm: bpm) }
 
     func stopCountdown() { countdown?.cancel(); countdown = nil; countdownPos = nil }
