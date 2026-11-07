@@ -36,6 +36,26 @@ final class SwimDriverTests: XCTestCase {
         }
     }
 
+    /// Activity callbacks can arrive after the sample that proves the swimmer resumed.
+    func testActivityUsesHealthKitSampleTime() throws {
+        let clock = Clock(t0)
+        let driver = makeDriver(clock: clock, defaults: freshDefaults())
+        let workout = try parseWorkout(json: #"{"version":1,"name":"test","pool_length_m":25,"blocks":[{"name":"set","sets":[{"reps":2,"distance_m":100}]}]}"#)
+        let engine = try LiveEngine(workout: workout, workoutId: "test", startedAtMs: ms(t0), records: [])
+        driver.begin(engine: engine, workout: workout, id: "test", start: t0)
+        for i in 0..<4 {
+            let start = Double(i * 12)
+            _ = engine.onLap(lap: Lap(startS: start, endS: start + 10, stroke: .freestyle, strokes: nil), nowS: start + 15)
+        }
+        clock.now = t0 + 100
+        XCTAssertEqual(engine.tick(nowS: 100).phase, .resting)
+        driver.onActivity(at: t0 + 95)
+        clock.now = t0 + 100
+        driver.tick()
+        XCTAssertEqual(driver.state?.phase, .swimming)
+        XCTAssertEqual(driver.state?.repElapsedS, 5)
+    }
+
     /// Relaunch mid-swim: rebuilding from the laps, pauses and saved marks gives the same engine and state as never stopping.
     func testRecoveryEqualsUninterruptedRun() throws {
         for name in recordingNames {

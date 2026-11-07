@@ -22,6 +22,8 @@ use align::{Group, mid};
 const REST_GAP_S: f64 = 20.0;
 /// Slowest lap event seen in spike 0b.
 const LAP_DELAY_MAX_S: f64 = 9.0;
+/// A fresh activity sample this close to a planned send-off starts the next rep early.
+const ACTIVITY_EARLY_START_S: f64 = 3.0;
 /// A lap this many times the typical length is slow: two merged lengths, or a slow stroke.
 const MERGED_FACTOR: f64 = 1.7;
 /// Beyond this a long lap is one length plus a pause at the wall (e.g. rest), not two merged lengths.
@@ -224,16 +226,39 @@ impl Engine {
 
     /// Stroke or distance data arrived at `t_s`: the swimmer is moving even if no lap has been reported.
     pub fn on_activity(&mut self, t_s: f64) {
-        if !t_s.is_finite() {
+        if !t_s.is_finite()
+            || self.laps.last().is_some_and(|lap| t_s <= lap.end_s)
+            || self.active_s.is_some_and(|active| t_s <= active)
+        {
             return;
         }
-        // Moving again after an unplanned stop: the rep started now, not when the rep before it ended.
         let s = self.tick(t_s);
         let paused = self.pauses.last().is_some_and(|p| p.1.is_none());
-        if s.phase == Phase::Resting && s.rest_remaining_s.is_none() && !paused {
-            self.resumed = Some((t_s, self.index_of(s.pos)));
+        if !paused {
+            if s.phase == Phase::Resting && s.rest_remaining_s.is_none() {
+                // Moving again after an unplanned stop: the rep started now, not when the rep before it ended.
+                self.resumed = Some((t_s, self.index_of(s.pos)));
+            } else {
+                let groups = self.groups();
+                if let Some((closed, end)) = self.closed_rep(&groups)
+                    && let Some(rest_end) = self.rest_end_after(&groups, closed, end)
+                    && let reset_at = self
+                        .rest_resets
+                        .iter()
+                        .rev()
+                        .find(|x| x.1 == closed)
+                        .map_or(end, |x| x.0)
+                    && closed + 1 == self.index_of(s.pos)
+                    && t_s >= rest_end - ACTIVITY_EARLY_START_S
+                    && self
+                        .resumed
+                        .is_none_or(|(start, rep)| rep != closed + 1 || start < end.max(reset_at))
+                {
+                    self.resumed = Some((t_s, closed + 1));
+                }
+            }
         }
-        self.active_s = Some(self.active_s.map_or(t_s, |a| a.max(t_s)));
+        self.active_s = Some(t_s);
     }
 
     /// The `HealthKit` session was paused or resumed at `now_s`. Paused time never counts as an unplanned stop.

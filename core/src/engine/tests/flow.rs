@@ -54,6 +54,82 @@ fn fixed_rest_counts_from_rep_end_interval_from_rep_start() {
 }
 
 #[test]
+fn activity_near_rest_end_keeps_send_off_and_backdates_the_rep_clock() {
+    let mut e =
+        engine(r#"{"reps": 2, "distance_m": 50, "rest": {"type": "fixed", "seconds": 15}}"#);
+    let end = swim(&mut e, 0.0, 2, 20.0);
+    let rest_end = end + 15.0;
+
+    e.on_activity(rest_end - 4.0);
+    e.on_activity(rest_end - 7.0); // stale cumulative statistics must not move the activity time back
+    let resting = e.tick(rest_end - 3.0);
+    assert_eq!(
+        (resting.phase, resting.rest_remaining_s),
+        (Phase::Resting, Some(3.0))
+    );
+
+    let swimming = e.tick(rest_end + 3.0);
+    assert_eq!(
+        (swimming.phase, swimming.rep_elapsed_s),
+        (Phase::Swimming, Some(3.0))
+    );
+}
+
+#[test]
+fn fresh_activity_in_final_three_seconds_starts_the_rep_immediately() {
+    let mut e =
+        engine(r#"{"reps": 2, "distance_m": 50, "rest": {"type": "fixed", "seconds": 15}}"#);
+    let end = swim(&mut e, 0.0, 2, 20.0);
+    let activity = end + 13.0; // two seconds before the scheduled send-off
+
+    e.on_activity(activity);
+    let swimming = e.tick(activity);
+    assert_eq!(
+        (
+            swimming.phase,
+            swimming.rest_remaining_s,
+            swimming.rep_elapsed_s
+        ),
+        (Phase::Swimming, None, Some(0.0))
+    );
+}
+
+#[test]
+fn activity_after_rest_end_starts_the_rep_clock_on_motion() {
+    let mut e =
+        engine(r#"{"reps": 2, "distance_m": 50, "rest": {"type": "fixed", "seconds": 15}}"#);
+    let end = swim(&mut e, 0.0, 2, 20.0);
+    let activity = end + 20.0;
+
+    e.on_activity(activity);
+    let swimming = e.tick(activity + 3.0);
+    assert_eq!(
+        (swimming.phase, swimming.rep_elapsed_s),
+        (Phase::Swimming, Some(3.0))
+    );
+}
+
+#[test]
+fn manual_back_rest_restart_discards_the_previous_activity_start() {
+    let mut e =
+        engine(r#"{"reps": 2, "distance_m": 50, "rest": {"type": "fixed", "seconds": 15}}"#);
+    let end = swim(&mut e, 0.0, 2, 20.0);
+    e.manual_next(end + 2.0); // skip this rest; the send-off is end + 3
+    e.on_activity(end + 3.0);
+
+    let reset_at = end + 3.5;
+    let reset = e.manual_back(reset_at).unwrap();
+    assert_eq!(
+        (reset.phase, reset.rest_remaining_s),
+        (Phase::Resting, Some(15.0))
+    );
+    assert_eq!(e.tick(reset_at + 14.5).phase, Phase::Resting);
+
+    e.on_activity(reset_at + 13.0);
+    assert_eq!(e.tick(reset_at + 13.0).phase, Phase::Swimming);
+}
+
+#[test]
 fn unplanned_stop_shows_resting() {
     let mut e = engine(r#"{"reps": 1, "distance_m": 100}"#);
     let end = swim(&mut e, 0.0, 2, 20.0);
@@ -99,7 +175,7 @@ fn strokes_after_a_stop_start_the_rep_clock() {
     swim(&mut e, end + 118.0, 1, 20.0);
     e.on_activity(end + 160.0);
     let s = e.tick(end + 170.0);
-    assert_eq!((s.pos.rep, s.rep_elapsed_s), (1, Some(17.0))); // rest ended at end + 153
+    assert_eq!((s.pos.rep, s.rep_elapsed_s), (1, Some(10.0))); // activity starts after the end + 153 send-off
 }
 
 #[test]
