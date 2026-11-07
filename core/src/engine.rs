@@ -74,6 +74,8 @@ pub struct RepResult {
 pub struct State {
     pub pos: Position,
     pub done_m: u32,
+    /// Visual estimate, capped below the next length until `HealthKit` confirms it.
+    pub estimated_done_m: f64,
     pub target_m: u32,
     pub phase: Phase,
     /// Countdown of a planned rest; `None` for a rest the swimmer took on their own.

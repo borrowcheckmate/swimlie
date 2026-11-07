@@ -1,6 +1,19 @@
 use super::*;
 
 #[test]
+fn progress_estimates_only_up_to_the_next_confirmed_length() {
+    let mut e = engine(r#"{"reps": 1, "distance_m": 100, "goal_s": 80}"#);
+    let end = swim(&mut e, 10.0, 1, 20.0);
+    let halfway = e.tick(end + 10.0);
+    assert_eq!(halfway.done_m, 25);
+    assert_eq!(halfway.estimated_done_m, 37.5);
+    let capped = e.tick(end + 20.0);
+    assert_eq!(capped.estimated_done_m, 48.75);
+    swim(&mut e, end + 2.0, 1, 20.0);
+    assert!(e.tick(end + 23.0).estimated_done_m >= 50.0);
+}
+
+#[test]
 fn rep_completes_at_target_distance() {
     let mut e = engine(r#"{"reps": 2, "distance_m": 50}"#);
     let end = swim(&mut e, 0.0, 1, 20.0);
