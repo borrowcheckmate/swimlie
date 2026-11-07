@@ -15,6 +15,17 @@ fn pause_freezes_rest_and_rep_clocks() {
 }
 
 #[test]
+fn pause_inside_rep_does_not_look_like_rest_between_reps() {
+    let mut e = engine(r#"{"reps": 2, "distance_m": 50}"#);
+    swim(&mut e, 0.0, 1, 20.0);
+    e.set_paused(true, 21.0);
+    e.set_paused(false, 121.0);
+    swim(&mut e, 122.0, 1, 20.0);
+    swim(&mut e, 162.0, 2, 20.0);
+    assert_eq!(reps(&e), vec![0, 0, 1, 1]);
+}
+
+#[test]
 fn late_interval_has_at_least_ten_seconds_rest() {
     let mut e =
         engine(r#"{"reps": 2, "distance_m": 50, "rest": {"type": "interval", "seconds": 30}}"#);
