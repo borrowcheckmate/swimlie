@@ -239,7 +239,7 @@ impl Engine {
             } else {
                 let groups = self.groups();
                 if let Some((closed, end)) = self.closed_rep(&groups)
-                    && let Some(rest_end) = self.rest_end_after(&groups, closed, end)
+                    && let Some(rest_end) = self.rest_end_after(&groups, closed, end, t_s)
                     && let reset_at = self
                         .rest_resets
                         .iter()
@@ -288,7 +288,11 @@ impl Engine {
         // A length that ended while the planned rest was still counting down is a HealthKit ghost (the
         // swimmer hangs on the wall): left in, it starts the next rep and hides the rest.
         // shortcut: skipped once manual actions exist (a late lap of the closed rep ends inside its rest).
-        if self.log.is_empty() && self.tick(lap.end_s).rest_remaining_s.is_some() {
+        let remaining = self.tick(lap.end_s).rest_remaining_s;
+        let gear_rest = self.closed_rep(&self.groups()).is_some_and(|(c, _)| {
+            self.gear_change_after(c) && remaining.is_some_and(|r| r <= 60.0)
+        });
+        if self.log.is_empty() && remaining.is_some() && !gear_rest {
             return self.tick(now_s);
         }
         let typical = self.typical_length_s();

@@ -104,7 +104,9 @@ final class SwimSession: NSObject, SwimSessionModel, HKWorkoutSessionDelegate, H
             ended = false
             ageYears = dateOfBirthAge()
             attachHK(session, builder)
-            driver.recover(engine: e, workout: w, start: begin, pauses: pauseEvents(builder.workoutEvents), laps: lapEvents(builder.workoutEvents), marks: p.marks)
+            driver.recover(engine: e, workout: w, start: begin, pauses: pauseEvents(builder.workoutEvents), laps: lapEvents(builder.workoutEvents), marks: p.marks, pauseMarks: p.pauses ?? [])
+            paused = session.state == .paused
+            if paused != (p.pauses?.last?.paused ?? false) { driver.setPaused(paused) }
             PoolWorkout.enableWaterLockIfWanted() // already running, so no didChangeTo to do it
             startTimer()
             Beeper.prepare()
@@ -244,7 +246,7 @@ final class SwimSession: NSObject, SwimSessionModel, HKWorkoutSessionDelegate, H
             if to == .running { PoolWorkout.enableWaterLockIfWanted() } // only works once the session is running
             if to == .paused || (to == .running && from == .paused) {
                 self.paused = to == .paused
-                self.driver.setPaused(self.paused)
+                self.driver.setPaused(self.paused, at: date)
             }
             if to == .ended { self.end() } // ended by the system: still save the swim
         }

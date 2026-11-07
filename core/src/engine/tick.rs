@@ -34,14 +34,15 @@ impl Engine {
                     last_rep,
                 };
             }
-            Some((c, end)) => (c + 1, 0, self.rest_end_after(&groups, c, end)),
+            Some((c, end)) => (c + 1, 0, self.rest_end_after(&groups, c, end, now_s)),
             None => (
                 groups.last().map_or(0, |g| g.rep),
                 groups.last().map_or(0, |g| g.lengths),
                 groups.is_empty().then(|| {
-                    self.go_s
-                        .or_else(|| self.start_reset_s.map(|t| t + START_COUNTDOWN_S))
-                        .unwrap_or(START_COUNTDOWN_S)
+                    self.go_s.unwrap_or_else(|| {
+                        let start = self.start_reset_s.unwrap_or(0.0);
+                        self.pause_deadline(start, start + START_COUNTDOWN_S, now_s)
+                    })
                 }),
             ),
         };
@@ -71,6 +72,8 @@ impl Engine {
             .rev()
             .find(|x| x.1 == rep)
             .map_or(start, |x| x.0);
+        let waiting_for_late_start = self.waiting_for_late_start(&groups, closed, rep);
+        let start = if waiting_for_late_start { now_s } else { start };
         State {
             pos: p.pos,
             done_m: done * pool,
@@ -78,10 +81,28 @@ impl Engine {
             phase,
             rest_remaining_s,
             last_rep_pace_s_per_100m,
-            rep_elapsed_s: (phase == Phase::Swimming).then_some(now_s - start),
+            rep_elapsed_s: (phase == Phase::Swimming)
+                .then_some(now_s - start - self.paused_s(start, now_s)),
             swum_m,
             last_rep,
         }
+    }
+
+    fn waiting_for_late_start(
+        &self,
+        groups: &[Group],
+        closed: Option<(usize, f64)>,
+        rep: usize,
+    ) -> bool {
+        closed.is_some_and(|(c, end)| {
+            self.reps[c].rest.as_ref().is_some_and(|r| {
+                r.kind == RestKind::Interval
+                    && groups
+                        .last()
+                        .is_some_and(|g| end - g.start_s > f64::from(r.seconds))
+            }) && self.resumed.is_none_or(|(_, r)| r != rep)
+                && groups.last().is_none_or(|g| g.rep != rep)
+        })
     }
 
     /// The latest rep known to be finished, and when it finished.
@@ -98,20 +119,46 @@ impl Engine {
     }
 
     /// When the rest after rep `c` (finished at `end`) is over, with skips and fresh activity applied.
-    pub(super) fn rest_end_after(&self, groups: &[Group], c: usize, end: f64) -> Option<f64> {
+    pub(super) fn rest_end_after(
+        &self,
+        groups: &[Group],
+        c: usize,
+        end: f64,
+        now_s: f64,
+    ) -> Option<f64> {
         let start = groups
             .last()
             .filter(|g| g.rep == c)
             .map_or(end, |g| g.start_s);
-        let rest = self.reps[c].rest.as_ref()?;
-        let base = self.rest_resets.iter().rev().find(|x| x.1 == c).map_or(
-            match rest.kind {
-                RestKind::Fixed => end,
-                RestKind::Interval => start,
-            },
-            |x| x.0,
-        );
+        let rest = self.reps[c].rest.as_ref();
+        let gear_change = self.gear_change_after(c);
+        if rest.is_none() && !gear_change {
+            return None;
+        }
+        let base = self
+            .rest_resets
+            .iter()
+            .rev()
+            .find(|x| x.1 == c)
+            .map_or_else(
+                || match rest.map(|r| r.kind) {
+                    Some(RestKind::Interval) => start,
+                    _ => end,
+                },
+                |x| x.0,
+            );
         // A manual "next" during this rest ends it at the skip time.
+        let planned = rest.map_or(base, |r| base + f64::from(r.seconds));
+        let minimum = if rest.is_some_and(|r| r.kind == RestKind::Interval) {
+            end + 10.0
+        } else {
+            end
+        };
+        let deadline = self
+            .pause_deadline(base, planned, now_s)
+            .max(self.pause_deadline(end, minimum, now_s));
+        let extra = if gear_change { 60.0 } else { 0.0 };
+        let deadline = self.pause_deadline(deadline, deadline + extra, now_s);
         Some(
             self.rest_skips
                 .iter()
@@ -122,8 +169,28 @@ impl Engine {
                         .filter(|(t, rep)| *rep == c + 1 && *t >= base)
                         .map(|(t, _)| t),
                 )
-                .fold(base + f64::from(rest.seconds), f64::min),
+                .fold(deadline, f64::min),
         )
+    }
+
+    pub(super) fn gear_change_after(&self, c: usize) -> bool {
+        let equipment = |p: super::Position| {
+            &self.workout.blocks[p.block as usize].sets[p.set as usize].equipment
+        };
+        self.reps.get(c + 1).is_some_and(|next| {
+            canonical_equipment(equipment(self.reps[c].pos))
+                != canonical_equipment(equipment(next.pos))
+        })
+    }
+
+    fn pause_deadline(&self, start: f64, deadline: f64, now_s: f64) -> f64 {
+        self.pauses.iter().fold(deadline, |end, &(pause, resume)| {
+            if pause < end {
+                end + (resume.unwrap_or(now_s).min(now_s) - pause.max(start)).max(0.0)
+            } else {
+                end
+            }
+        })
     }
 
     /// Unplanned stop: the next lap is `REST_GAP_S` overdue, with no strokes or distance since either.

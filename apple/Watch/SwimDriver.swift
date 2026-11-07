@@ -30,6 +30,8 @@ struct Pending: Codable {
     // Each manual next and back: seconds since start and laps fed by then, so a replay sees what the swimmer saw.
     var marks: [Mark] = []
     struct Mark: Codable { var t: Double; var laps: Int; var back: Bool? = nil } // back: nil or false is a next
+    var pauses: [PauseMark]? = nil
+    struct PauseMark: Codable { var t: Double; var laps: Int; var paused: Bool }
     private static let key = "swimlie.pending"
     static func load(_ defaults: UserDefaults) -> Pending? { defaults.data(forKey: key).flatMap { try? JSONDecoder().decode(Pending.self, from: $0) } }
     func save(_ defaults: UserDefaults) { defaults.set(try? JSONEncoder().encode(self), forKey: Self.key) }
@@ -74,12 +76,12 @@ struct Pending: Codable {
     }
 
     /// The app was relaunched mid-swim: rebuild from HealthKit's laps and pauses plus the saved marks.
-    func recover(engine: LiveEngine, workout: Workout, start: Date, pauses: [PauseEvent], laps: [LapEvent], marks: [Pending.Mark]) {
+    func recover(engine: LiveEngine, workout: Workout, start: Date, pauses: [PauseEvent], laps: [LapEvent], marks: [Pending.Mark], pauseMarks: [Pending.PauseMark] = []) {
         self.workout = workout
         state = nil
         attach(engine, start: start)
         seenPauses.formUnion(pauses.map(\.key)) // old presses were already acted on
-        feed(laps: laps, replay: marks)
+        feed(laps: laps, replay: marks, pauseMarks: pauseMarks)
         apply(engine.tick(nowS: nowS))
     }
 
@@ -120,9 +122,21 @@ struct Pending: Codable {
     }
 
     /// Laps not yet fed, applied in end order. `replay` (recovery): laps are applied as of their end time, each mark after the laps that had arrived when it was pressed.
-    func feed(laps events: [LapEvent], replay: [Pending.Mark]? = nil) {
+    func feed(laps events: [LapEvent], replay: [Pending.Mark]? = nil, pauseMarks: [Pending.PauseMark] = []) {
         guard let engine else { return }
         var marks = replay?[...] ?? []
+        var pauses = pauseMarks[...]
+        func replayActions(through count: Int) {
+            while true {
+                let mark = marks.first.flatMap { $0.laps <= count ? $0 : nil }
+                let pause = pauses.first.flatMap { $0.laps <= count ? $0 : nil }
+                if let p = pause, p.t < (mark?.t ?? .infinity) {
+                    engine.setPaused(paused: p.paused, nowS: p.t); pauses.removeFirst()
+                } else if let m = mark {
+                    replayMark(m, engine); marks.removeFirst()
+                } else { break }
+            }
+        }
         for (i, e) in events.filter({ seen.insert($0.key).inserted })
             .sorted(by: { $0.end < $1.end }).enumerated() {
             let lap = Lap(
@@ -130,10 +144,10 @@ struct Pending: Codable {
                 endS: e.end.timeIntervalSince(start),
                 stroke: e.stroke,
                 strokes: nil) // filled from HealthKit's samples at End
-            while let m = marks.first, m.laps <= i { replayMark(m, engine); marks.removeFirst() }
+            replayActions(through: i)
             apply(engine.onLap(lap: lap, nowS: replay == nil ? nowS : lap.endS))
         }
-        for m in marks { replayMark(m, engine) }
+        replayActions(through: .max)
     }
 
     /// Re-applies a saved manual press: a back undoes the engine's latest action, as it did when pressed.
@@ -150,7 +164,17 @@ struct Pending: Codable {
         events.filter { seenPauses.insert($0.key).inserted }.count
     }
 
-    func setPaused(_ paused: Bool) { engine?.setPaused(paused: paused, nowS: nowS) }
+    func setPaused(_ paused: Bool, at date: Date? = nil) {
+        guard let engine else { return }
+        let t = (date ?? now()).timeIntervalSince(start)
+        engine.setPaused(paused: paused, nowS: t)
+        if var p = Pending.load(defaults) {
+            p.pauses = (p.pauses ?? []) + [.init(t: t, laps: seen.count, paused: paused)]
+            p.save(defaults)
+        }
+        if paused { stopCountdown() }
+        apply(engine.tick(nowS: nowS))
+    }
     func onActivity(at date: Date) {
         guard let engine else { return }
         engine.onActivity(tS: date.timeIntervalSince(start)) // use sample time; callbacks can lag

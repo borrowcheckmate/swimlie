@@ -1,6 +1,54 @@
 use super::*;
 
 #[test]
+fn pause_freezes_rest_and_rep_clocks() {
+    let mut e =
+        engine(r#"{"reps": 2, "distance_m": 50, "rest": {"type": "fixed", "seconds": 15}}"#);
+    let end = swim(&mut e, 0.0, 2, 20.0);
+    e.set_paused(true, end + 5.0);
+    e.set_paused(false, end + 65.0);
+    assert_eq!(e.tick(end + 66.0).rest_remaining_s, Some(9.0));
+    assert_eq!(e.tick(end + 76.0).rep_elapsed_s, Some(1.0));
+    e.set_paused(true, end + 77.0);
+    e.set_paused(false, end + 107.0);
+    assert_eq!(e.tick(end + 108.0).rep_elapsed_s, Some(3.0));
+}
+
+#[test]
+fn late_interval_has_at_least_ten_seconds_rest() {
+    let mut e =
+        engine(r#"{"reps": 2, "distance_m": 50, "rest": {"type": "interval", "seconds": 30}}"#);
+    let end = swim(&mut e, 0.0, 2, 20.0);
+    assert_eq!(e.tick(end + 1.0).rest_remaining_s, Some(9.0));
+    assert_eq!(e.tick(end + 15.0).rep_elapsed_s, Some(0.0));
+    e.on_activity(end + 16.0);
+    assert_eq!(e.tick(end + 20.0).rep_elapsed_s, Some(4.0));
+}
+
+#[test]
+fn equipment_change_extends_rest_and_pauses_with_it() {
+    let mut e = engine(
+        r#"{"reps": 1, "distance_m": 25, "equipment": ["paddles"], "rest": {"type": "fixed", "seconds": 15}}, {"reps": 1, "distance_m": 25, "equipment": ["fins"]}"#,
+    );
+    let end = swim(&mut e, 0.0, 1, 20.0);
+    assert_eq!(e.tick(end + 5.0).rest_remaining_s, Some(70.0));
+    e.set_paused(true, end + 20.0);
+    e.set_paused(false, end + 50.0);
+    assert_eq!(e.tick(end + 51.0).rest_remaining_s, Some(54.0));
+}
+
+#[test]
+fn swimming_during_gear_change_rest_counts_the_length() {
+    let mut e = engine(
+        r#"{"reps": 1, "distance_m": 25, "equipment": ["paddles"], "rest": {"type": "fixed", "seconds": 15}}, {"reps": 1, "distance_m": 25, "equipment": ["fins"]}"#,
+    );
+    let end = swim(&mut e, 0.0, 1, 20.0);
+    swim(&mut e, end + 20.0, 1, 20.0);
+    assert_eq!(e.tick(end + 45.0).phase, Phase::Done);
+    assert_eq!(e.session().laps.len(), 2);
+}
+
+#[test]
 fn rep_completes_at_target_distance() {
     let mut e = engine(r#"{"reps": 2, "distance_m": 50}"#);
     let end = swim(&mut e, 0.0, 1, 20.0);
