@@ -75,7 +75,9 @@ impl Engine {
     }
 
     pub(super) fn gap_before(&self, lap: usize) -> f64 {
-        self.laps[lap].start_s - self.laps[lap - 1].end_s
+        let start = self.laps[lap - 1].end_s;
+        let end = self.laps[lap].start_s;
+        end - start - self.paused_s(start, end)
     }
 
     /// Manual marks are hard limits: laps before a mark belong to the closed rep or earlier, laps
