@@ -112,10 +112,10 @@ fn beginner_without_css_paces_at_200_and_has_no_sprint_or_hard() {
 
 #[test]
 fn forty_minutes_without_css_by_level() {
-    for (level, want) in [
-        (SwimLevel::Beginner, 800.0),
-        (SwimLevel::Intermediate, 1200.0),
-        (SwimLevel::Advanced, 1400.0),
+    for level in [
+        SwimLevel::Beginner,
+        SwimLevel::Intermediate,
+        SwimLevel::Advanced,
     ] {
         for _ in 0..20 {
             let w = generate_workout(
@@ -125,10 +125,10 @@ fn forty_minutes_without_css_by_level() {
                     ..swimmer(None)
                 },
             );
-            let d = f64::from(w.total_distance_m());
+            let duration = metrics::estimated_duration_s(w, Some(level.no_css_pace()));
             assert!(
-                (d / want - 1.0).abs() <= 0.15,
-                "{level:?}: {d} m, want about {want} m"
+                (duration / 2400.0 - 1.0).abs() <= 0.15,
+                "{level:?}: {duration} s, want about 2400 s"
             );
         }
     }
@@ -194,6 +194,76 @@ fn goal_and_interval_from_css() {
             seconds: 120
         })
     );
+}
+
+#[test]
+fn intermediate_without_history_starts_at_about_110_seconds() {
+    assert_eq!(
+        (SwimLevel::Intermediate.no_css_pace() * 1.02).round(),
+        110.0
+    );
+}
+
+#[test]
+fn history_calibrates_goal_and_preserves_interval_rest() {
+    let mut w = generate_workout(
+        CreatorInputs {
+            strokes: vec![Stroke::Freestyle],
+            ..input("threshold", 25, vec![], Some(2000), None)
+        },
+        swimmer(Some(85.0)),
+    );
+    let set = w.blocks[1]
+        .sets
+        .iter_mut()
+        .find(|s| s.distance_m == 100)
+        .unwrap();
+    let old_goal = set.goal_s.unwrap();
+    let old_rest = set.rest.as_ref().unwrap().seconds - old_goal;
+    let intensity = set.intensity;
+    let different = metrics::GoalHistory {
+        stroke: Stroke::Freestyle,
+        distance_m: 100,
+        intensity,
+        equipment: vec![Equipment::Fins],
+        median_s: 60.0,
+    };
+    let different_intensity = metrics::GoalHistory {
+        intensity: if intensity == Intensity::Easy {
+            Intensity::Sprint
+        } else {
+            Intensity::Easy
+        },
+        equipment: vec![],
+        ..different
+    };
+    adapt_goals(&mut w, &[different, different_intensity]);
+    assert_eq!(
+        w.blocks[1]
+            .sets
+            .iter()
+            .find(|s| s.distance_m == 100)
+            .unwrap()
+            .goal_s,
+        Some(old_goal)
+    );
+    adapt_goals(
+        &mut w,
+        &[metrics::GoalHistory {
+            stroke: Stroke::Freestyle,
+            distance_m: 100,
+            intensity,
+            equipment: vec![],
+            median_s: 100.0,
+        }],
+    );
+    let set = w.blocks[1]
+        .sets
+        .iter()
+        .find(|s| s.distance_m == 100)
+        .unwrap();
+    assert_eq!(set.goal_s, Some(98));
+    assert!(set.rest.as_ref().unwrap().seconds >= 98 + old_rest);
 }
 
 #[test]

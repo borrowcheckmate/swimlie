@@ -126,6 +126,7 @@ Rule-based, pure Rust (`core/src/coach.rs` and `core/src/coach/`). `generate_pla
 
 **Paces** (s/100 m) = CSS × intensity × stroke: intensity easy ×1.15, moderate ×1.08, threshold ×1.02, hard ×0.96, sprint ×0.88; stroke backstroke ×1.10, butterfly and mixed (IM) ×1.12, breaststroke ×1.20, freestyle/any/kick ×1. Usable CSS = finite and > 0. Without one: 120 s/100 m (`metrics::css_pace`, the estimate fallback), and the first warm-up set's notes say to swim the CSS test (`NO_CSS_NOTE`). Coach paces for no CSS come from the level, see below, and the first warm-up set's notes say to swim the CSS test (`NO_CSS_NOTE`).
 - `goal_s` = pace × distance / 100, rounded, on main swim sets (not on warm-up, cool-down, kick or drill sets).
+- When recent complete timed reps match the stroke, distance, intensity and equipment, their latest session's median sets the goal at 98% of that time; interval rest is preserved. Guessed lengths and drills do not calibrate goals.
 - Rest per rep on sets with a goal: `interval` = goal + rest, rounded up to 5 s, rest = 10 s + 5 s per 100 m (hard: 15 s + 10 s per 100 m). A 1-rep set gets `fixed` = rest, rounded up to 5 s, instead. Sprints get `fixed` = goal clamped to 20–60 s, rounded up to 5 s (about 1:1). Warm-up, cool-down, kick and drill sets get `fixed` 15–20 s.
 
 **generate_workout(CreatorInputs, SwimmerProfile) -> Workout**: `kind` maps to a type (lower-cased, trimmed): `easy recovery`/`easy`/`recovery`, `endurance`, `threshold`, `speed`/`sprint`, `technique`/`drill`, anything else `mixed`.
