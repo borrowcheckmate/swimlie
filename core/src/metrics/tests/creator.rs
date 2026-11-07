@@ -1,6 +1,38 @@
 use super::*;
 
 #[test]
+fn goal_history_uses_latest_comparable_session() {
+    let mut old = stored("old", rep(pos(0, 0), 0.0, 20.0, 2, None));
+    old.session.started_at_ms = 1;
+    old.session.workout.blocks[0].sets[0].goal_s = Some(40);
+    let mut recent = stored("recent", rep(pos(0, 0), 0.0, 30.0, 2, None));
+    recent.session.started_at_ms = 2;
+    recent.session.workout.blocks[0].sets[0].goal_s = Some(40);
+    let mut fins = stored("fins", rep(pos(0, 0), 0.0, 25.0, 2, None));
+    fins.session.started_at_ms = 3;
+    fins.session.workout.blocks[0].sets[0].goal_s = Some(40);
+    fins.session.workout.blocks[0].sets[0].equipment = vec![Equipment::Fins];
+    let p = swimmer_profile(vec![recent, fins, old], None, 4, SwimLevel::default());
+    assert_eq!(p.goal_history.len(), 2);
+    assert_eq!(
+        p.goal_history
+            .iter()
+            .find(|h| h.equipment.is_empty())
+            .unwrap()
+            .median_s,
+        62.0
+    );
+    assert_eq!(
+        p.goal_history
+            .iter()
+            .find(|h| !h.equipment.is_empty())
+            .unwrap()
+            .median_s,
+        52.0
+    );
+}
+
+#[test]
 fn profile_from_recent_sessions() {
     const DAY_MS: i64 = 86_400_000;
     const NOW: i64 = 1_000 * DAY_MS;
@@ -43,6 +75,7 @@ fn profile_without_sessions_is_empty() {
             sessions_28d: 0,
             weekly_m_28d: 0.0,
             rep_times: vec![],
+            goal_history: vec![],
             age_years: None,
             max_hr_bpm: None,
             level: SwimLevel::default()
@@ -84,6 +117,7 @@ fn creator_brief_with_history() {
                 count: 6,
             },
         ],
+        goal_history: vec![],
         age_years: Some(41),
         max_hr_bpm: Some(182.0),
         level: SwimLevel::default(),
@@ -132,6 +166,7 @@ fn creator_brief_plan_lines() {
         sessions_28d: 0,
         weekly_m_28d: 0.0,
         rep_times: vec![],
+        goal_history: vec![],
         age_years: None,
         max_hr_bpm: None,
         level: SwimLevel::default(),
@@ -171,6 +206,7 @@ fn creator_brief_without_history_or_targets() {
         sessions_28d: 0,
         weekly_m_28d: 0.0,
         rep_times: vec![],
+        goal_history: vec![],
         age_years: None,
         max_hr_bpm: None,
         level: SwimLevel::default(),

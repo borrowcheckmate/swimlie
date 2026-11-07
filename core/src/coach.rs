@@ -27,7 +27,7 @@ pub const DEFAULT_REST_S: u32 = 20;
 /// Distance for a time target. The estimate steps when a rep count changes, so a proportional
 /// rescale can oscillate across the target; bisect on the distance and keep the closest estimate.
 /// Below 400 m is allowed here: sprint rests make a 15 min speed swim shorter than 400 m at CSS 150.
-const NO_CSS_NOTE: &str = "No CSS yet: paces assume 2:00 /100 m. Swim the CSS test to set yours.";
+const NO_CSS_NOTE: &str = "No CSS yet. Swim the CSS test to set yours.";
 
 /// The no-CSS note in English or Dutch (the validators accept either).
 #[cfg(test)]
@@ -132,7 +132,7 @@ pub fn generate_workout(inputs: CreatorInputs, profile: SwimmerProfile) -> Worko
             Some((r >> 8, &inputs.strokes)),
             &inputs.language,
         );
-        adapt_goals(&mut w, &profile.rep_times);
+        adapt_goals(&mut w, &profile.goal_history);
         scale_rest(&mut w, inputs.rest_percent);
         w
     };
@@ -140,13 +140,14 @@ pub fn generate_workout(inputs: CreatorInputs, profile: SwimmerProfile) -> Worko
 }
 
 /// Calibrate a matching rep from the swimmer's recent median, keeping the planned rest allowance.
-fn adapt_goals(workout: &mut Workout, history: &[metrics::StrokeTime]) {
+fn adapt_goals(workout: &mut Workout, history: &[metrics::GoalHistory]) {
     for set in workout.blocks.iter_mut().flat_map(|b| &mut b.sets) {
         let Some(old) = set.goal_s else { continue };
         let Some(recent) = history.iter().find(|r| {
             r.stroke == set.stroke
                 && r.distance_m == set.distance_m
-                && r.count > 0
+                && r.intensity == set.intensity
+                && r.equipment == metrics::canonical_equipment(&set.equipment)
                 && r.median_s.is_finite()
                 && r.median_s > 0.0
         }) else {
@@ -235,7 +236,7 @@ pub fn generate_plan(inputs: CreatorInputs, profile: SwimmerProfile) -> Plan {
             None,
             &inputs.language,
         );
-        adapt_goals(&mut workout, &profile.rep_times);
+        adapt_goals(&mut workout, &profile.goal_history);
         workout
     };
     let per_swim = target_distance(&inputs, pace_css, 1500, &|d| build_at(kind, d, 0, 0));
