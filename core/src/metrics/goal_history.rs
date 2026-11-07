@@ -33,8 +33,7 @@ pub(super) fn goal_history<'a>(
                 .iter()
                 .zip(&session.lap_positions)
                 .any(|(&n, &p)| p == rep.pos && n != 1);
-            if set.goal_s.is_none()
-                || set.drill.is_some()
+            if set.drill.is_some()
                 || guessed
                 || set.stroke == Stroke::Any
                 || rep.lengths != set.distance_m / session.workout.pool_length_m

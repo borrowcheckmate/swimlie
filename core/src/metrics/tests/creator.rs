@@ -7,7 +7,7 @@ fn goal_history_uses_latest_comparable_session() {
     old.session.workout.blocks[0].sets[0].goal_s = Some(40);
     let mut recent = stored("recent", rep(pos(0, 0), 0.0, 30.0, 2, None));
     recent.session.started_at_ms = 2;
-    recent.session.workout.blocks[0].sets[0].goal_s = Some(40);
+    recent.session.workout.blocks[0].sets[0].goal_s = None;
     let mut fins = stored("fins", rep(pos(0, 0), 0.0, 25.0, 2, None));
     fins.session.started_at_ms = 3;
     fins.session.workout.blocks[0].sets[0].goal_s = Some(40);
