@@ -32,8 +32,10 @@ fn late_interval_has_at_least_ten_seconds_rest() {
     let end = swim(&mut e, 0.0, 2, 20.0);
     assert_eq!(e.tick(end + 1.0).rest_remaining_s, Some(9.0));
     assert_eq!(e.tick(end + 15.0).rep_elapsed_s, Some(0.0));
+    assert_eq!(e.tick(end + 15.0).estimated_done_m, 0.0);
     e.on_activity(end + 16.0);
     assert_eq!(e.tick(end + 20.0).rep_elapsed_s, Some(4.0));
+    assert!(e.tick(end + 20.0).estimated_done_m > 0.0);
 }
 
 #[test]
@@ -57,6 +59,19 @@ fn swimming_during_gear_change_rest_counts_the_length() {
     swim(&mut e, end + 20.0, 1, 20.0);
     assert_eq!(e.tick(end + 45.0).phase, Phase::Done);
     assert_eq!(e.session().laps.len(), 2);
+}
+
+#[test]
+fn progress_estimates_only_up_to_the_next_confirmed_length() {
+    let mut e = engine(r#"{"reps": 1, "distance_m": 100, "goal_s": 80}"#);
+    let end = swim(&mut e, 10.0, 1, 20.0);
+    let halfway = e.tick(end + 10.0);
+    assert_eq!(halfway.done_m, 25);
+    assert_eq!(halfway.estimated_done_m, 37.5);
+    let capped = e.tick(end + 20.0);
+    assert_eq!(capped.estimated_done_m, 48.75);
+    swim(&mut e, end + 2.0, 1, 20.0);
+    assert!(e.tick(end + 23.0).estimated_done_m >= 50.0);
 }
 
 #[test]

@@ -11,7 +11,6 @@ Open source, local-first replacement for MySwimPro. iOS app + Apple Watch compan
 │ metrics   pace/100, SWOLF, stroke rate, CSS, training load, PRs              │
 │ store     SQLite (rusqlite, bundled), UUID ids + updated_at (sync-ready)     │
 │ coach     rule-based workout generator (templates × goal × CSS pace)         │
-│ io        JSON import/export, validation against schema                      │
 └──────────────┬───────────────────────────────┬───────────────────────────────┘
                │ UniFFI → XCFramework          │ plain Rust crate (later)
        ┌───────┴────────┐               ┌──────┴─────────────────┐
@@ -124,8 +123,9 @@ Rule-based, pure Rust (`core/src/coach.rs` and `core/src/coach/`). `generate_pla
 - `metrics::css_test_times(session) -> Option<CssTest { t400_s, t200_s }>`: a session is a CSS test when its workout has a set with `reps` 1, block `repeat` 1, freestyle, `sprint`, 400 m, and one like it of 200 m. The times are the `swim_s` of those complete reps (all lengths swum); `None` if a trial is missing or incomplete or `css_s_per_100m` rejects the times. Structural, so a copied or AI-made CSS test counts too.
 - `Store.import_css_tests() -> u32`: for every live session that is a CSS test and has no `css_results` row with the session's id (tombstones count, so a deleted result stays deleted), save the CSS under that id with `created_at` = the session's start. The iPhone calls it after applying a sync and sends the store back if it saved any; the watch only receives CSS rows.
 
-**Paces** (s/100 m) = CSS × intensity × stroke: intensity easy ×1.15, moderate ×1.08, threshold ×1.02, hard ×0.96, sprint ×0.88; stroke backstroke ×1.10, butterfly and mixed (IM) ×1.12, breaststroke ×1.20, freestyle/any/kick ×1. Usable CSS = finite and > 0. Without one: 120 s/100 m (`metrics::css_pace`, the estimate fallback), and the first warm-up set's notes say to swim the CSS test (`NO_CSS_NOTE`). Coach paces for no CSS come from the level, see below, and the first warm-up set's notes say to swim the CSS test (`NO_CSS_NOTE`).
+**Paces** (s/100 m) = CSS × intensity × stroke: intensity easy ×1.15, moderate ×1.08, threshold ×1.02, hard ×0.96, sprint ×0.88; stroke backstroke ×1.10, butterfly and mixed (IM) ×1.12, breaststroke ×1.20, freestyle/any/kick ×1. Usable CSS = finite and > 0. Without one: 120 s/100 m (`metrics::css_pace`, the estimate fallback). Coach paces for no CSS come from the level, see below, and the first warm-up set's notes say to swim the CSS test (`NO_CSS_NOTE`).
 - `goal_s` = pace × distance / 100, rounded, on main swim sets (not on warm-up, cool-down, kick or drill sets).
+- When recent complete timed reps match the stroke, distance, intensity and equipment, their latest session's median sets the goal at 98% of that time; interval rest is preserved. Guessed lengths and drills do not calibrate goals.
 - Rest per rep on sets with a goal: `interval` = goal + rest, rounded up to 5 s, rest = 10 s + 5 s per 100 m (hard: 15 s + 10 s per 100 m). A 1-rep set gets `fixed` = rest, rounded up to 5 s, instead. Sprints get `fixed` = goal clamped to 20–60 s, rounded up to 5 s (about 1:1). Warm-up, cool-down, kick and drill sets get `fixed` 15–20 s.
 
 **generate_workout(CreatorInputs, SwimmerProfile) -> Workout**: `kind` maps to a type (lower-cased, trimmed): `easy recovery`/`easy`/`recovery`, `endurance`, `threshold`, `speed`/`sprint`, `technique`/`drill`, anything else `mixed`.

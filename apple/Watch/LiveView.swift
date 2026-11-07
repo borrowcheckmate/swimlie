@@ -119,7 +119,7 @@ struct LiveView: View {
         return max(0, session.stateDate.addingTimeInterval(rem).timeIntervalSince(now).rounded())
     }
 
-    /// Progress readable from the corner of the eye: a swim fills up to its goal time (orange past it, by metres without a goal). Rest and start use the circle.
+    /// Progress readable from the corner of the eye; the last fraction of a length waits for its lap.
     @ViewBuilder private func filled(_ s: SwimState) -> some View {
         // With the wrist down, redraws land on whole seconds from the rest's end (or from the last tick): the timer is throttled there, so free-running redraws step unevenly.
         let anchor = wristDown ? session.stateDate.addingTimeInterval(s.restRemainingS ?? 0) : .now
@@ -127,12 +127,9 @@ struct LiveView: View {
             .padding(.horizontal, 14).padding(.vertical, 8).frame(maxWidth: .infinity, maxHeight: .infinity)
         switch s.phase {
         case .swimming where fills:
-            if let g = currentSet(s)?.goalS {
-                let t = s.repElapsedS ?? 0
-                Filled(frac: t / Double(g), color: t > Double(g) ? .waterOrange : .waterGreen, dimmed: wristDown) { content }
-            } else {
-                Filled(frac: Double(s.doneM) / Double(max(s.targetM, 1)), color: .waterBlue, dimmed: wristDown) { content }
-            }
+            let goal = currentSet(s)?.goalS
+            let color: Color = goal.map { (s.repElapsedS ?? 0) > Double($0) ? .waterOrange : .waterGreen } ?? .waterBlue
+            Filled(frac: s.estimatedDoneM / Double(max(s.targetM, 1)), color: color, dimmed: wristDown) { content }
         default: content
         }
     }
@@ -216,7 +213,7 @@ struct LiveView: View {
 
     /// Thin bar of metres done in the intensity color, with metres and goal under it.
     private func progress(_ s: SwimState, _ set: WorkoutSet?) -> some View {
-        let frac = min(1, Double(s.doneM) / Double(max(s.targetM, 1)))
+        let frac = min(1, s.estimatedDoneM / Double(max(s.targetM, 1)))
         return VStack(spacing: 4) {
             GeometryReader { g in
                 ZStack(alignment: .leading) {

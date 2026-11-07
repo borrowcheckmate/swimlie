@@ -176,6 +176,7 @@ pub(super) fn state(
     State {
         pos,
         done_m: 0,
+        estimated_done_m: 0.0,
         target_m: 0,
         phase,
         rest_remaining_s,

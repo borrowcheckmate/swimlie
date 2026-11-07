@@ -68,7 +68,7 @@ fn english_keys() -> Vec<String> {
         "Count strokes",
         "Kick on your back",
         " (default pace)",
-        "No CSS yet: paces assume 2:00 /100 m. Swim the CSS test to set yours.",
+        "No CSS yet. Swim the CSS test to set yours.",
         "{weeks}-week {kind} plan{default}",
     ]
     .map(String::from)

@@ -25,6 +25,7 @@ impl Engine {
                 return State {
                     pos: p.pos,
                     done_m: p.lengths * pool,
+                    estimated_done_m: f64::from(p.lengths * pool),
                     target_m: p.lengths * pool,
                     phase: Phase::Done,
                     rest_remaining_s: None,
@@ -74,9 +75,11 @@ impl Engine {
             .map_or(start, |x| x.0);
         let waiting_for_late_start = self.waiting_for_late_start(&groups, closed, rep);
         let start = if waiting_for_late_start { now_s } else { start };
+        let estimate = self.length_progress(&groups, rep, (start, now_s), phase);
         State {
             pos: p.pos,
             done_m: done * pool,
+            estimated_done_m: estimate.mul_add(f64::from(pool), f64::from(done * pool)),
             target_m: p.lengths * pool,
             phase,
             rest_remaining_s,
@@ -102,6 +105,31 @@ impl Engine {
                         .is_some_and(|g| end - g.start_s > f64::from(r.seconds))
             }) && self.resumed.is_none_or(|(_, r)| r != rep)
                 && groups.last().is_none_or(|g| g.rep != rep)
+        })
+    }
+
+    fn length_progress(
+        &self,
+        groups: &[Group],
+        rep: usize,
+        (start, now): (f64, f64),
+        phase: Phase,
+    ) -> f64 {
+        if phase != Phase::Swimming {
+            return 0.0;
+        }
+        let p = &self.reps[rep];
+        let set = &self.workout.blocks[p.pos.block as usize].sets[p.pos.set as usize];
+        let expected = set
+            .goal_s
+            .map(|goal| f64::from(goal) / f64::from(p.lengths))
+            .or_else(|| self.typical_length_s());
+        let start = groups
+            .last()
+            .filter(|g| g.rep == rep)
+            .map_or(start, |g| g.end_s);
+        expected.filter(|t| *t > 0.0).map_or(0.0, |t| {
+            ((now - start - self.paused_s(start, now)) / t).clamp(0.0, 0.95)
         })
     }
 
