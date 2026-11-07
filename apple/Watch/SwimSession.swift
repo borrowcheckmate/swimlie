@@ -104,7 +104,9 @@ final class SwimSession: NSObject, SwimSessionModel, HKWorkoutSessionDelegate, H
             ended = false
             ageYears = dateOfBirthAge()
             attachHK(session, builder)
-            driver.recover(engine: e, workout: w, start: begin, pauses: pauseEvents(builder.workoutEvents), laps: lapEvents(builder.workoutEvents), marks: p.marks)
+            driver.recover(engine: e, workout: w, start: begin, pauses: pauseEvents(builder.workoutEvents), laps: lapEvents(builder.workoutEvents), marks: p.marks, pauseMarks: p.pauses ?? [])
+            paused = session.state == .paused
+            if paused != (p.pauses?.last?.paused ?? false) { driver.setPaused(paused) }
             PoolWorkout.enableWaterLockIfWanted() // already running, so no didChangeTo to do it
             startTimer()
             Beeper.prepare()
@@ -219,7 +221,15 @@ final class SwimSession: NSObject, SwimSessionModel, HKWorkoutSessionDelegate, H
     nonisolated func workoutBuilderDidCollectEvent(_ b: HKLiveWorkoutBuilder) {
         let events = b.workoutEvents
         log.events(events)
-        Task { @MainActor in self.driver.feed(laps: self.lapEvents(events)); self.pauseRequests(events) }
+        Task { @MainActor in
+            let laps = self.lapEvents(events)
+            if let resumed = self.driver.newLapAfterPause(laps), self.hkSession?.state == .paused {
+                self.driver.setPaused(false, at: resumed)
+                self.hkSession?.resume()
+            }
+            self.driver.feed(laps: laps)
+            self.pauseRequests(events)
+        }
     }
 
     nonisolated func workoutBuilder(_ b: HKLiveWorkoutBuilder, didCollectDataOf types: Set<HKSampleType>) {
@@ -244,7 +254,7 @@ final class SwimSession: NSObject, SwimSessionModel, HKWorkoutSessionDelegate, H
             if to == .running { PoolWorkout.enableWaterLockIfWanted() } // only works once the session is running
             if to == .paused || (to == .running && from == .paused) {
                 self.paused = to == .paused
-                self.driver.setPaused(self.paused)
+                self.driver.setPaused(self.paused, at: date)
             }
             if to == .ended { self.end() } // ended by the system: still save the swim
         }
