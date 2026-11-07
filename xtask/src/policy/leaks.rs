@@ -2,7 +2,8 @@ use super::identity::is_anonymous_email;
 
 const PLACEHOLDER_DOMAINS: [&str; 3] = ["example.com", "example.org", "example.net"];
 const PLACEHOLDER_SUFFIXES: [&str; 4] = [".example", ".test", ".invalid", ".localhost"];
-const SERVICE_ADDRESSES: [&str; 1] = ["git@github.com"];
+/// `support@github.com` signs off every Dependabot commit.
+const SERVICE_ADDRESSES: [&str; 2] = ["git@github.com", "support@github.com"];
 const HOME_PREFIXES: [&str; 3] = ["/Users/", "/home/", ":\\Users\\"];
 const PRIVATE_KEY_MARKER: &str = concat!("PRIVATE", " KEY-----");
 const TOKENS: [(&str, usize); 12] = [
@@ -160,6 +161,10 @@ mod tests {
             email("jane", "example.com"),
             email("jane", "corp.test"),
             email("git", "github.com:owner/repo"),
+            format!(
+                "Signed-off-by: dependabot[bot] <{}>",
+                email("support", "github.com")
+            ),
             email("actions/checkout", "v4"),
             email("serde", "1.0.200"),
             "@AGENTS.md".to_owned(),

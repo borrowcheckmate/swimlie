@@ -105,7 +105,8 @@ fn content_problems(location: &str, text: &str) -> Vec<Violation> {
 
 fn is_attribution(line: &str) -> bool {
     let line = line.to_lowercase();
-    line.contains("co-authored-by:")
+    // GitHub adds the bot as co-author when a Dependabot PR is squash-merged.
+    (line.contains("co-authored-by:") && !line.contains("[bot]@users.noreply.github.com"))
         || line.contains('\u{1f916}')
         || (ATTRIBUTION_PHRASES
             .iter()
@@ -181,6 +182,17 @@ mod tests {
             messages(&check_commit_message(&raw)),
             ["commit message:3: remove tool attribution"]
         );
+    }
+
+    #[test]
+    fn accepts_dependabot_trailers() {
+        let raw = format!(
+            "build(deps): bump x\n\nSigned-off-by: dependabot[bot] <{}>\n\
+             Co-authored-by: dependabot[bot] <{}>\n",
+            ["support", "github.com"].join("@"),
+            ["49699333+dependabot[bot]", "users.noreply.github.com"].join("@"),
+        );
+        assert_eq!(check_commit_message(&raw), Vec::<Violation>::new());
     }
 
     #[test]
