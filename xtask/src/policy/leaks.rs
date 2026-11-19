@@ -195,11 +195,7 @@ mod tests {
         let aws = format!("{}{}", "AK", format_args!("IA{}", "Z".repeat(16)));
         let key = format!("-----BEGIN RSA {}{}", "PRIVATE KEY", "-----");
         for secret in [github, aws, key] {
-            assert_eq!(
-                find_leaks(&secret),
-                [(1, "possible secret or token")],
-                "{secret}"
-            );
+            assert_eq!(find_leaks(&secret), [(1, "possible secret or token")]);
         }
     }
 
