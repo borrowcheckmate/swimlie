@@ -353,9 +353,17 @@ fn check_drills(w: &Workout) -> Result<(), WorkoutError> {
     Ok(())
 }
 
+/// Parses a workout or plan file, or an AI reply: only the first JSON object is read, so the prose and code fence
+/// a chat app puts around it are dropped.
 #[uniffi::export]
 pub fn parse_import(json: String) -> Result<Import, WorkoutError> {
-    let v: serde_json::Value = serde_json::from_str(&json).map_err(from_serde)?;
+    let from = json.find('{').and_then(|i| json.get(i..)).unwrap_or(&json);
+    let mut values = serde_json::Deserializer::from_str(from).into_iter();
+    let v: serde_json::Value = values
+        .next()
+        .unwrap_or_else(|| serde_json::from_str(""))
+        .map_err(from_serde)?;
+    let json = from.get(..values.byte_offset()).unwrap_or(from).to_owned();
     Ok(if v.get("weeks").is_some() {
         let plan = parse_plan(json)?;
         plan.weeks

@@ -114,6 +114,21 @@ fn parse_import_picks_plan_or_workout() {
 }
 
 #[test]
+fn parse_import_reads_a_chat_reply() {
+    let reply = format!(
+        "Here is your workout:\n\n```json\n{EXAMPLE}\n```\n\nPaste it into Swimlie. Want a {{harder}} version?"
+    );
+    assert_eq!(
+        parse_import(reply).unwrap(),
+        parse_import(EXAMPLE.into()).unwrap()
+    );
+    assert!(matches!(
+        parse_import("Sorry, I can't help with that.".into()),
+        Err(WorkoutError::Json { .. })
+    ));
+}
+
+#[test]
 fn rejects_bad_plans() {
     let mut p = parse_plan(PLAN.into()).unwrap();
     p.weeks.clear();

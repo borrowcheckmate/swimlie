@@ -283,10 +283,7 @@ struct CreatorView: View {
     /// The AI prompt: `system` is the bundled instructions with the schema and example, `user` the form as a brief,
     /// the swimmer's Ask AI request (the AI keeps the form unless the request changes it) and the reply language.
     private var aiPromptParts: (system: String, user: String) {
-        let (schema, example) = isPlan ? ("plan.schema", "plan-example") : ("workout.schema", "example")
-        // The real schema and example replace the prompt's placeholder lines.
-        let prompt = bundledText("prompt", "md").split(separator: "\n", omittingEmptySubsequences: false).filter { !["My request:", "Schema: <", "Example: <"].contains(where: $0.hasPrefix) }.joined(separator: "\n")
-        let system = [prompt, "Schema:", bundledText(schema, "json"), "Example:", bundledText(example, "json")].joined(separator: "\n")
+        let system = aiSystemPrompt(plan: isPlan)
         var user = [creatorBrief(inputs: inputs, profile: profile)]
         let ask = request.trimmingCharacters(in: .whitespacesAndNewlines)
         if !ask.isEmpty { user.append("My request: \(ask)") }
@@ -312,7 +309,7 @@ struct CreatorView: View {
                 let imported: Import
                 while true {
                     do {
-                        let parsed = fillMissingRest(parsed: try parseImport(json: AIAssistant.jsonObject(in: reply)))
+                        let parsed = fillMissingRest(parsed: try parseImport(json: reply))
                         try checkEquipment(import: parsed, allowed: inputs.equipment)
                         imported = parsed
                         break

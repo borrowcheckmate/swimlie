@@ -103,12 +103,6 @@ enum AIAssistant {
         }
         return text
     }
-
-    /// The JSON object in a reply: from its first "{" to its last "}", so code fences and prose around it are dropped.
-    static func jsonObject(in reply: String) -> String {
-        guard let start = reply.firstIndex(of: "{"), let end = reply.lastIndex(of: "}"), start <= end else { return reply }
-        return String(reply[start...end])
-    }
 }
 
 /// One request for a workout or plan. `system` holds the instructions and schema, `user` the form and the swimmer's
@@ -120,7 +114,7 @@ final class AIGeneration {
 
     init(system: String, user: String) { self.system = system; self.user = user }
 
-    /// The raw reply; `AIAssistant.jsonObject(in:)` cleans it up.
+    /// The raw reply; `parseImport` reads the JSON object in it.
     func ask() async throws -> String {
         #if DEBUG
         if let text = AIAssistant.replay("GENERATE") { return text }

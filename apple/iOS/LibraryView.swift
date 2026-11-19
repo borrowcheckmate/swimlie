@@ -187,7 +187,7 @@ struct LibraryView: View {
                         }
                         Button("Choose file") { choosingFile = true }
                         if allowCopyPaste {
-                            Button("Copy AI prompt") { UIPasteboard.general.string = bundledText("prompt", "md") + "\n" + bundledText("workout.schema", "json") }
+                            Button("Copy AI prompt") { UIPasteboard.general.string = aiSystemPrompt(plan: false) + "\nMy request: " }
                         }
                     }
                 }
@@ -234,6 +234,13 @@ struct LibraryView: View {
 
 func bundledText(_ name: String, _ ext: String) -> String {
     Bundle.main.url(forResource: name, withExtension: ext).flatMap { try? String(contentsOf: $0, encoding: .utf8) } ?? ""
+}
+
+/// The bundled AI instructions with the real schema and example in place of the prompt's placeholder lines.
+func aiSystemPrompt(plan: Bool) -> String {
+    let (schema, example) = plan ? ("plan.schema", "plan-example") : ("workout.schema", "example")
+    let prompt = bundledText("prompt", "md").split(separator: "\n", omittingEmptySubsequences: false).filter { !["My request:", "Schema: <", "Example: <"].contains(where: $0.hasPrefix) }.joined(separator: "\n")
+    return [prompt, "Schema:", bundledText(schema, "json"), "Example:", bundledText(example, "json")].joined(separator: "\n")
 }
 
 #if DEBUG
