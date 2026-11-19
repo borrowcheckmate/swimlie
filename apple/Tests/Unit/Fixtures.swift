@@ -75,7 +75,7 @@ struct Run {
 
 /// Starts a swim and feeds the recording live: the clock moves to each lap's receive time before the lap arrives.
 /// `pauseAfter`: index of a lap after which the swimmer presses pause and waits 90 s of wall clock. The laps keep their
-/// timestamps (HealthKit has no laps while paused), so the timeline has no gap; only the clock moves.
+/// timestamps move with the pause, since HealthKit has no laps while paused.
 @MainActor
 func replay(_ r: Recording, pauseAfter k: Int? = nil) throws -> Run {
     let clock = Clock(t0)
@@ -83,10 +83,13 @@ func replay(_ r: Recording, pauseAfter k: Int? = nil) throws -> Run {
     let driver = makeDriver(clock: clock, defaults: defaults)
     let engine = try LiveEngine(workout: r.workout, workoutId: "test", startedAtMs: ms(t0), records: [])
     driver.begin(engine: engine, workout: r.workout, id: "test", start: t0)
+    var offset = 0.0
     for (i, en) in r.entries.enumerated() {
-        clock.now = max(clock.now, t0 + en.receivedS) // the clock never goes back
+        clock.now = max(clock.now, t0 + en.receivedS + offset) // the clock never goes back
         driver.tick()
-        driver.feed(laps: [en.lap])
+        var lap = en.lap
+        lap.start.addTimeInterval(offset); lap.end.addTimeInterval(offset)
+        driver.feed(laps: [lap])
         if i == k {
             XCTAssertEqual(driver.newPauseRequests([PauseEvent(key: "p1"), PauseEvent(key: "p1")]), 1, "a double press in one batch counts once")
             XCTAssertEqual(driver.newPauseRequests([PauseEvent(key: "p1")]), 0, "a press seen before is ignored")
@@ -94,6 +97,7 @@ func replay(_ r: Recording, pauseAfter k: Int? = nil) throws -> Run {
             XCTAssertEqual(before?.phase, .swimming, "pause is tested mid-length")
             driver.setPaused(true)
             clock.now.addTimeInterval(90)
+            offset += 90
             driver.tick()
             XCTAssertEqual(driver.state?.pos, before?.pos, "a paused rep does not advance")
             XCTAssertEqual(driver.state?.doneM, before?.doneM, "a paused rep does not gain distance")

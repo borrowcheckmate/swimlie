@@ -3,6 +3,37 @@ import XCTest
 
 @MainActor
 final class SwimDriverTests: XCTestCase {
+    func testOnlyNewLapsStartingAfterPauseCanResume() throws {
+        let clock = Clock(t0)
+        let d = makeDriver(clock: clock, defaults: freshDefaults())
+        let w = try parseWorkout(json: #"{"version":1,"name":"test","pool_length_m":25,"blocks":[{"name":"set","sets":[{"reps":1,"distance_m":100}]}]}"#)
+        let e = try LiveEngine(workout: w, workoutId: "test", startedAtMs: ms(t0), records: [])
+        d.begin(engine: e, workout: w, id: "test", start: t0)
+        clock.now = t0 + 40; d.setPaused(true)
+        let delayed = LapEvent(key: "old", start: t0 + 20, end: t0 + 39, stroke: .freestyle)
+        XCTAssertNil(d.newLapAfterPause([delayed]))
+        let fresh = LapEvent(key: "new", start: t0 + 80, end: t0 + 100, stroke: .freestyle)
+        XCTAssertEqual(d.newLapAfterPause([delayed, fresh]), t0 + 80)
+        d.setPaused(false, at: t0 + 80)
+        XCTAssertNil(d.newLapAfterPause([fresh]))
+    }
+    func testRecoveryRestoresPauseWindows() throws {
+        let clock = Clock(t0)
+        let defaults = freshDefaults()
+        let workout = try parseWorkout(json: #"{"version":1,"name":"test","pool_length_m":25,"blocks":[{"name":"set","sets":[{"reps":1,"distance_m":100}]}]}"#)
+        let a = makeDriver(clock: clock, defaults: defaults)
+        let engineA = try LiveEngine(workout: workout, workoutId: "test", startedAtMs: ms(t0), records: [])
+        a.begin(engine: engineA, workout: workout, id: "test", start: t0)
+        clock.now = t0 + 4; a.setPaused(true)
+        clock.now = t0 + 64; a.setPaused(false)
+        clock.now = t0 + 66; a.tick()
+        let pending = try XCTUnwrap(Pending.load(defaults))
+        let b = makeDriver(clock: clock, defaults: defaults)
+        let engineB = try LiveEngine(workout: workout, workoutId: "test", startedAtMs: ms(t0), records: [])
+        b.recover(engine: engineB, workout: workout, start: t0, pauses: [], laps: [], marks: pending.marks, pauseMarks: pending.pauses ?? [])
+        XCTAssertEqual(b.state, a.state)
+        XCTAssertEqual(b.state?.restRemainingS, 4)
+    }
     /// Cumulative lap events (workoutEvents repeats every lap so far) must not count twice.
     func testDuplicateLapsAreIgnored() throws {
         for name in recordingNames {

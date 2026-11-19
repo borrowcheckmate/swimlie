@@ -151,6 +151,7 @@ fn test_swimmer() -> SwimmerProfile {
         sessions_28d: 0,
         weekly_m_28d: 0.0,
         rep_times: vec![],
+        goal_history: vec![],
         age_years: None,
         max_hr_bpm: None,
         level: SwimLevel::default(),

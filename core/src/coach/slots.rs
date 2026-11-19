@@ -105,8 +105,8 @@ impl SwimLevel {
     pub(super) const fn no_css_pace(self) -> f64 {
         match self {
             Self::Beginner => 265.0,
-            Self::Intermediate => 170.0,
-            Self::Advanced => 138.0,
+            Self::Intermediate => 108.0,
+            Self::Advanced => 95.0,
         }
     }
 

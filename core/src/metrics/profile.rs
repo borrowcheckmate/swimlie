@@ -25,10 +25,10 @@ impl SwimLevel {
                 "beginner: no CSS means about 4:25 /100 m freestyle. Keep the total distance modest (a 40 min swim is about 800 m), reps short (25 to 100 m), rests long (at least 30 s, about 1.5 times the swim time of a rep), mostly easy and moderate, and no hard or sprint main sets."
             }
             Self::Intermediate => {
-                "intermediate: no CSS means about 2:50 /100 m freestyle. A 40 min swim is about 1200 m."
+                "intermediate: no CSS means about 1:48 /100 m freestyle. A 40 min swim is about 1800 m."
             }
             Self::Advanced => {
-                "advanced: no CSS means about 2:18 /100 m freestyle. A 40 min swim is about 1400 m."
+                "advanced: no CSS means about 1:35 /100 m freestyle. A 40 min swim is about 2000 m."
             }
         }
     }
@@ -53,6 +53,7 @@ pub struct SwimmerProfile {
     pub weekly_m_28d: f64,
     /// Complete reps of the last 90 days, sorted by stroke then distance.
     pub rep_times: Vec<StrokeTime>,
+    pub goal_history: Vec<super::GoalHistory>,
     /// From the newest session that has one.
     pub age_years: Option<u32>,
     /// Highest heart-rate sample of the last 90 days.
@@ -138,6 +139,7 @@ pub fn swimmer_profile(
         sessions_28d: last_28.len() as u32,
         weekly_m_28d: f64::from(distance_28) / 4.0,
         rep_times,
+        goal_history: super::goal_history::goal_history(recent(90)),
         age_years: sessions
             .iter()
             .filter(|st| st.session.age_years.is_some())
