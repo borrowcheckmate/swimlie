@@ -18,4 +18,11 @@ body:
     id: approach
     attributes:
       label: Where to look
-      description: Optional. A hunch about the cause, the module involved, or a recorded swim that reproduces it (`core/tests/data/`). No personal data or real locations.
+      description: Optional. Relevant ARCHITECTURE.md section, module, or replay fixture (`core/tests/data/`). No personal data or real locations.
+  - type: textarea
+    id: done
+    attributes:
+      label: Done when
+      description: Expected behaviour and the automated regression test that will prove the fix.
+    validations:
+      required: true

@@ -6,13 +6,14 @@ use std::process::Command;
 /// Longest allowed Rust source file. Longer files belong in submodules.
 const MAX_FILE_LINES: usize = 600;
 
-/// Runs every check that CI runs: formatting, clippy and the file length limit.
+/// Checks formatting, clippy and the file length limit.
 pub(crate) fn lint() -> Result<(), String> {
     run(Command::new("cargo").args(["fmt", "--all", "--check"]))?;
     run(Command::new("cargo").args([
         "clippy",
         "--workspace",
         "--all-targets",
+        "--locked",
         "--",
         "-D",
         "warnings",

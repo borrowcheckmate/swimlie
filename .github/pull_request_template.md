@@ -1,6 +1,5 @@
 Closes #
 
-<!-- What changed and why, in a few lines. -->
+<!-- What changed and why. -->
 
-- [ ] `cargo test` and `cargo xtask lint` pass
-- [ ] Swift changed: `cargo xtask test` passes and the screenshots look right
+<!-- How tested: cargo xtask ci; for Swift/bindings, cargo xtask test all and UI screenshot review. State any blocked checks. -->

@@ -29,11 +29,14 @@ use swimlie_core::store::StoredSession;
 mod devices;
 mod frames;
 mod lint;
+mod policy;
 mod process;
 mod recorder;
+mod repo;
 mod settings;
 mod sim;
 mod testflight;
+mod workflow;
 mod xcode;
 
 use devices::{install, show_devices};
@@ -70,7 +73,15 @@ const USAGE: &str = "usage: cargo xtask <command>
   brief <file.ndjson>                print the AI review brief of a recorder log (the exact model input)
   frames <video> [--fps N] [--cols N] [--out <png>]   contact sheet of a video, one frame per 1/fps s (default build/<stem>-sheet.png)
   shots                              fresh README screenshots: iPhone demo screens (build/phone-*.png) and watch UI shots (build/ui-*.png)
-  lint                               formatting, strict clippy and the file length limit (what CI runs)
+  ci                                 portable checks: lint, policy, docs, workspace tests, advisories
+  hooks                              install repository Git hooks
+  pre-commit                         identity, policy and lint
+  commit-msg <file>                  validate a commit message
+  commits <range>                    validate commit messages and identities in a Git range
+  identity [range]                   check local identity or commit emails in a Git range
+  policy                             repository hygiene checks
+  pr-check                           validate PR_TITLE and PR_BODY environment variables
+  lint                               formatting, strict clippy and the file length limit
   mockups                            render README device mockups into docs/ from build/ screenshots
 settings (.env in the repo root, see .env.example): SWIMLIE_PHONE, SWIMLIE_WATCH";
 
@@ -112,6 +123,14 @@ fn main() {
 
     let rest = &args[args.len().min(1)..];
     let result = match args.first().map(String::as_str) {
+        Some("ci") if rest.is_empty() => workflow::ci(),
+        Some("hooks") if rest.is_empty() => workflow::hooks(),
+        Some("pre-commit") if rest.is_empty() => workflow::pre_commit(),
+        Some("commits") if rest.len() == 1 => workflow::commits(&rest[0]),
+        Some("commit-msg") if rest.len() == 1 => workflow::commit_msg(&rest[0]),
+        Some("identity") if rest.len() <= 1 => workflow::identity(rest.first().map(String::as_str)),
+        Some("policy") if rest.is_empty() => workflow::policy(),
+        Some("pr-check") if rest.is_empty() => workflow::pr_check(),
         Some("xcframework") if rest.is_empty() => xcframework(),
         Some("project") if rest.is_empty() => project(),
         Some("test") if rest.len() <= 1 => test(rest.first().map(String::as_str)),
