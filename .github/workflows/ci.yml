@@ -36,6 +36,8 @@ jobs:
       - uses: dtolnay/rust-toolchain@stable
       - uses: Swatinem/rust-cache@v2
       - name: Validate PR title and body
+        # release-plz writes its own body, which opens with a robot emoji.
+        if: ${{ !startsWith(github.head_ref, 'release-plz-') }}
         env:
           PR_TITLE: ${{ github.event.pull_request.title }}
           PR_BODY: ${{ github.event.pull_request.body }}
