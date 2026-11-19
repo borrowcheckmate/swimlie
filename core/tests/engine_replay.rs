@@ -131,7 +131,7 @@ fn swim_a_replay() {
     let (workout, session, live_ok, final_ok, _) = replay(SWIM_A);
     // Remaining misses are explained in PLAN.md section 3; raise these when the engine improves.
     assert!(live_ok >= 67, "live accuracy regressed");
-    assert!(final_ok >= 66, "final accuracy regressed");
+    assert!(final_ok >= 67, "final accuracy regressed");
 
     // Main set: 4 reps of 4 lengths; pace = 390.11 s / 400 m with turns (lap time alone was 357.727 s), SWOLF = duration + strokes per lap.
     let reps = metrics::reps(&session);

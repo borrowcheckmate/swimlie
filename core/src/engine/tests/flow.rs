@@ -306,6 +306,30 @@ fn missing_length_does_not_shift_later_reps() {
 }
 
 #[test]
+fn missed_length_in_a_long_gap_counts_instead_of_rest() {
+    // Issue #39: 4x25 catch-up, rep 2 got no lap (89 s gap), rep 4 only an 8 s fragment, which is dropped.
+    let mut e =
+        engine(r#"{"reps": 4, "distance_m": 25, "rest": {"type": "fixed", "seconds": 20}}"#);
+    let end = swim(&mut e, 0.0, 1, 22.0);
+    let end = swim(&mut e, end + 89.0, 1, 22.0);
+    assert_eq!(reps(&e), [0, 2]);
+    let end = swim(&mut e, end + 60.0, 1, 8.0);
+    assert_eq!(reps(&e), [0, 2]);
+    let end = swim(&mut e, end + 60.0, 1, 11.0);
+    assert_eq!(reps(&e), [0, 2, 3]);
+    assert_eq!(e.tick(end + 5.0).phase, Phase::Done);
+}
+
+#[test]
+fn long_rest_without_room_for_a_length_stays_rest() {
+    let mut e =
+        engine(r#"{"reps": 2, "distance_m": 25, "rest": {"type": "fixed", "seconds": 20}}"#);
+    let end = swim(&mut e, 0.0, 1, 22.0);
+    swim(&mut e, end + 55.0, 1, 22.0);
+    assert_eq!(reps(&e), [0, 1]);
+}
+
+#[test]
 fn merged_lap_counts_as_two_lengths() {
     let mut e = engine(r#"{"reps": 2, "distance_m": 100}"#);
     let end = swim(&mut e, 0.0, 2, 20.0);

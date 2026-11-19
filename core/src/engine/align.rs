@@ -1,6 +1,6 @@
 use super::{
     COST_EXTRA, COST_MISSING, COST_NO_REST, COST_PAUSE, COST_STROKE, Engine, Lap, Position,
-    REST_GAP_S, Stroke, TYPICAL_WINDOW,
+    REST_GAP_S, RestKind, Stroke, TYPICAL_WINDOW,
 };
 
 /// Alignment table: cheapest cost and back pointer per state (laps placed, reps over).
@@ -24,6 +24,13 @@ impl Table {
 
     fn cost(&self, laps: usize, reps_over: usize) -> f64 {
         self.best[laps * self.width + reps_over]
+    }
+
+    /// First lap of the last rep on the cheapest way to state (`laps`, `reps_over`); `None` when that
+    /// rep has no laps.
+    fn last_rep_from(&self, laps: usize, reps_over: usize) -> Option<usize> {
+        let from = self.from[laps * self.width + reps_over].0;
+        (from < laps).then_some(from)
     }
 
     /// Records `cost` for the state (`laps_placed`, one more rep over) if it beats the known one.
@@ -80,6 +87,37 @@ impl Engine {
         end - start - self.paused_s(start, end)
     }
 
+    /// The gap before lap `i` has room for all of rep `r` that `HealthKit` missed (a slow drill): the
+    /// planned rest before it, its lengths at the typical pace, and its own rest. Only within a set,
+    /// after a complete rep (laps `from..i`): between sets, or after a short rep, a long gap is far
+    /// more likely extra rest or that rep's own missed lengths.
+    fn missed_rep_fits(&self, from: usize, i: usize, r: usize) -> bool {
+        let (Some(t), Some(prev)) = (self.typical_length_s(), r.checked_sub(1)) else {
+            return false;
+        };
+        if self.lengths[from..i].iter().sum::<u32>() < self.reps[prev].lengths {
+            return false;
+        }
+        let set = |k: usize| {
+            let p = self.reps[k].pos;
+            (p.block, p.round, p.set)
+        };
+        if set(prev) != set(r) {
+            return false;
+        }
+        let swim = |k: usize| t * f64::from(self.reps[k].lengths);
+        // At least a stop at the wall (`REST_GAP_S / 2`), so a missed rep needs more than a turn.
+        let rest = |k: usize| {
+            let planned = self.reps[k].rest.as_ref().map_or(0.0, |x| match x.kind {
+                RestKind::Interval => f64::from(x.seconds) - swim(k),
+                RestKind::Fixed => f64::from(x.seconds),
+            });
+            let gear = if self.gear_change_after(k) { 60.0 } else { 0.0 };
+            (planned + gear).max(REST_GAP_S / 2.0)
+        };
+        self.gap_before(i) >= rest(prev) + swim(r) + rest(r)
+    }
+
     /// Manual marks are hard limits: laps before a mark belong to the closed rep or earlier, laps
     /// after it to a later rep (or count as extra on the last rep once the workout is done).
     pub(super) fn allowed(&self, lap: usize, rep: usize) -> bool {
@@ -103,10 +141,20 @@ impl Engine {
                 if base.is_infinite() {
                     continue;
                 }
-                // Rep r without any detected lap.
-                let missing = COST_MISSING.mul_add(f64::from(self.reps[r].lengths), base);
+                // Rep r without any detected lap: free once per gap that fits it, where taking the gap
+                // as rest instead costs `COST_MISSING` (issue #39).
+                let missed = i < n
+                    && table
+                        .last_rep_from(i, r)
+                        .is_some_and(|from| self.missed_rep_fits(from, i, r));
+                let missing = if missed {
+                    base
+                } else {
+                    COST_MISSING.mul_add(f64::from(self.reps[r].lengths), base)
+                };
                 table.relax((i, r), i, missing);
-                self.place_laps(&mut table, i, r, base);
+                let rest_cost = if missed { COST_MISSING } else { 0.0 };
+                self.place_laps(&mut table, i, r, base + rest_cost);
             }
         }
         table.backtrack(n)
